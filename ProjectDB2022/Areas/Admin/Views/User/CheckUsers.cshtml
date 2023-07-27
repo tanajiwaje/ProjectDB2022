@@ -1,0 +1,149 @@
+﻿
+@{
+    ViewBag.Title = "CheckUsers";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<script>
+    $(document).ready(function () {
+        GetAllDetails();
+        GetAllDetailsActive();
+    })
+
+    function GetAllDetails() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/userdetails",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    
+                    $.each(resp, function (i, d) {
+                        var birthDate = new Date(d.birth_date); var b = birthDate.toISOString().split("T")[0];
+                        var JoinDate = new Date(d.joining_date); var j = JoinDate.toISOString().split("T")[0];
+                        if (d.is_permium === 0) {
+                            $("#tbldata").append("<tr><td>" + (i + 1) + "</td> <td>" + d.first_name + "</td><td> " + d.middle_name + "</td><td>" + d.last_name + "</td><td>" + d.local_address + "</td><td>" + b + "</td><td>" + j + "</td><td>" + d.user_photo + "</td><td>" + d.mobile_number + "</td><td>" + d.email_address + "</td><td>" + d.user_name + "</td><td>" + d.is_permium + "</td><td>" + d.password + "</td > <td>  <button class='btn btn-primary' onclick='Active(" + d.user_id + ",\"" + d.is_permium + "\")'>Active</button>  <button  class='btn btn-danger' onclick='inactive(" + d.user_id + ",\"" + d.is_permium + "\")'>inactive</button> </td> </tr>")
+                        }
+                        })
+                }
+            })
+    }
+
+    function Active(id, premium) {
+        alert("hello")
+        var st = { "user_id": id, "is_permium": premium}
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/changePremium",
+                method: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(st),
+                success: function (resp) {
+                    alert(resp)
+                    $("#tbldata").empty()
+                    $("#tbldata1").empty()
+                    GetAllDetails();
+                    GetAllDetailsActive();
+                }
+            })
+    }
+
+    function inactive(id, premium) {
+        alert("helo")
+        var st = { "user_id": id, "is_permium": premium }
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/changePremium",
+                method: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(st),
+                success: function (resp) {
+                    alert(resp)
+                    $("#tbldata").empty()
+                    $("#tbldata1").empty()
+                    GetAllDetails();
+                    GetAllDetailsActive();
+                }
+            })
+    }
+
+    function GetAllDetailsActive() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/userdetails",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    $.each(resp, function (i, d) {
+                        var birthDate = new Date(d.birth_date); var b = birthDate.toISOString().split("T")[0];
+                        var JoinDate = new Date(d.joining_date); var j = JoinDate.toISOString().split("T")[0];
+                        if (d.is_permium === 1) {
+                            $("#tbldata1").append("<tr><td>" + (i + 1) + "</td> <td>" + d.first_name + "</td><td> " + d.middle_name + "</td><td>" + d.last_name + "</td><td>" + d.local_address + "</td><td>" + b + "</td><td>" + j + "</td><td>" + d.user_photo + "</td><td>" + d.mobile_number + "</td><td>" + d.email_address + "</td><td>" + d.user_name + "</td><td>" + d.is_permium + "</td><td>" + d.password + "</td > <td>  <button hidden class='btn btn-primary' onclick='Active(" + d.user_id + ",\"" + d.is_permium + "\")'>Active</button>  <button  class='btn btn-danger' onclick='inactive(" + d.user_id + ",\"" + d.is_permium + "\")'>inactive</button> </td> </tr>")
+                        }
+                    })
+                }
+            })
+    }
+
+    
+</script>
+
+
+<h3>Click Active</h3>
+<table class="table table-striped"  border="1">
+    <thead>
+        <tr>
+            <th style="color:red">Sr no</th>
+            <th>First Name</th>
+            <th>Middle Name</th>
+            <th>last Name</th>
+            <th>local address</th>
+            <th>Birth Date</th>
+            <th>Joining Date</th>
+            <th>User Photo</th>
+            <th>Mobile no</th>
+            <th>email</th>
+            <th>User</th>
+            <th>premium</th>
+            <th>password</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="tbldata">
+    </tbody>
+</table>
+
+<hr />
+
+
+<h3 > active</h3>
+
+<div  style="border:1px solid red;overflow:scroll;height:120px;width:100%;">
+    <table class="" border="1">
+        <thead>
+            <tr>
+                <td>Sr no</td>
+                <td>First Name</td>
+                <td>Middle Name</td>
+                <td>last Name</td>
+                <td>local address</td>
+                <td>Birth Date</td>
+                <td>Joining Date</td>
+                <td>User Photo</td>
+                <td>Mobile no</td>
+                <td>email</td>
+                <td>User</td>
+                <td>premium</td>
+                <td>password</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="tbldata1">
+        </tbody>
+    </table>
+</div>
+
+

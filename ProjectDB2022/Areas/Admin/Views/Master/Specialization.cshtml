@@ -1,0 +1,193 @@
+﻿
+@{
+    ViewBag.Title = "Specialization";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<script>
+    $(document).ready(function () {
+        GetAllQualification()
+        GetAllSpecialization();
+        $("#savebtn").click(function () {
+            saveSpecialization();
+        })
+
+        $("#editbtn").click(function () {
+            editSpecialization();
+        })
+
+    })
+
+    function GetAllSpecialization() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/specilization",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    console.log(resp)
+                    $.each(resp, function (i, d) {
+                        $("#tbldata").append("<tr><td>" + (i + 1) + "</td> <td>" + d.specialization_name + "</td><td> " + d.qualification_name + "</td > <td>  <button class='btn btn-primary' onclick='Edit(" + d.specialization_id + ", \"" + d.specialization_name + "\")'>Edit</button>  <button class='btn btn-danger' onclick='Delete(" + d.specialization_id + ")'>Delete</button> </td> </tr>")
+                    })
+                }
+            })
+    }
+
+    function editSpecialization() {
+        var cid = $("#cid").val();
+        var cname = $("#cname").val();
+        var city_json = { "specialization_id": cid, "specialization_name": cname };
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/specilization",
+                method: 'put',
+                contentType: 'application/json',
+                data: JSON.stringify(city_json),
+                success: function (resp) {
+                    alert(resp);
+                    $("#myModal").modal('hide');
+                    $("#tbldata").empty();
+                    GetAllSpecialization();
+                    $("#cid").val("");
+                    $("#cname").val("");
+                }
+            })
+    }
+
+    function Edit(i, n) {
+        $("#cid").val(i);
+        $("#cname").val(n);
+        $("#editbtn").show();
+        $("#savebtn").hide();
+        $("#drop").hide();
+        $("#myModal").modal('show');
+
+    }
+
+    function Delete(id) {
+
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/specilization/" + id,
+                method: 'delete',
+                contentType: 'application/json',
+                // data: JSON.stringify(st),
+                success: function (resp) {
+                    alert(resp)
+                    $("#tbldata").empty();
+                    GetAllSpecialization();
+                }
+            })
+    }
+
+    function GetAllQualification() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/qualification",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    $.each(resp, function (i, d) {
+                        // $("#ddstate").append("<option " + d.state_id + ">" + d.state_name + "</option>")
+                        $("#ddstate").append("<option value='" + d.qualification_id + "'>" + d.qualification_name+ "</option>");
+
+                    })
+                }
+            })
+    }
+
+    function AddSpecialization() {
+        $("#cid").val("");
+        $("#cname").val("");
+        $("#drop").show();
+        $("#savebtn").show();
+        $("#myModal").modal('show');
+
+        $("#editbtn").hide();
+    }
+
+    function saveSpecialization() {
+
+        $("#myModal").modal('hide');
+        var select = $("#ddstate").val();
+        var cname = $("#cname").val();
+
+        var city_json = { "specialization_name": cname, "qualification_id": select };
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/specilization",
+                method: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(city_json),
+                success: function (resp) {
+                    alert(resp);
+                    $("#tbldata").empty();
+                    GetAllSpecialization();
+                }
+            })
+
+    }
+
+</script>
+
+
+<button class="btn btn-primary" onclick="AddSpecialization()">Add Specialization</button>
+
+<div class="m-4">
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Specialization</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+
+                    <table class="table table-borderless">
+                        <tr id="drop">
+                            <td> <label class="label">select Qualification</label> </td>
+                            <td>
+                                <select id="ddstate" class="form-select" aria-label="Default select example">
+                                    <option>select</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td> <label class="label">Specialization id</label></td>
+                            <td> <input class="form-control" type="text" id="cid" placeholder="id" disabled /></td>
+                        </tr>
+
+                        <tr>
+                            <td> <label class="label-info">Specialization Name</label></td>
+                            <td><input type="text" id="cname" class="form-control" /></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savebtn">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="editbtn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <table class="table border-1">
+        <thead>
+            <tr>
+                <td>Sr no</td>
+                <td>Specialization Name</td>
+                <td>qualification</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="tbldata">
+        </tbody>
+    </table>
+</div>

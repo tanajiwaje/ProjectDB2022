@@ -1,0 +1,167 @@
+﻿
+@{
+    ViewBag.Title = "Roles";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<script>
+    $(document).ready(function () {
+
+        GetAllRols();
+        $("#savebtn").click(function () {
+            saveRols();
+        })
+
+        $("#editbtn").click(function () {
+            editRols();
+        })
+
+    })
+
+    function GetAllRols() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/rols",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    console.log(resp)
+                    $.each(resp, function (i, d) {
+                        $("#tbldata").append("<tr><td>" + (i + 1) + "</td> <td>" + d.role + "</td > <td>  <button class='btn btn-primary' onclick='Edit(" + d.role_id + ", \"" + d.role + "\")'>Edit</button>  <button class='btn btn-danger' onclick='Delete(" + d.role_id + ")'>Delete</button> </td> </tr>")
+                    })
+                }
+            })
+    }
+
+    function editRols() {
+        var cid = $("#cid").val();
+        var cname = $("#cname").val();
+        var _json = { "role_id": cid, "role": cname };
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/rols",
+                method: 'put',
+                contentType: 'application/json',
+                data: JSON.stringify(_json),
+                success: function (resp) {
+                    alert(resp);
+                    $("#myModal").modal('hide');
+                    $("#tbldata").empty();
+                    GetAllRols();
+                    $("#cid").val("");
+                    $("#cname").val("");
+                }
+            })
+    }
+
+    function Edit(i, n) {
+        $("#cid").val(i);
+        $("#cname").val(n);
+        $("#editbtn").show();
+        $("#savebtn").hide();
+        $("#myModal").modal('show');
+
+    }
+
+    function Delete(id) {
+
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/rols/" + id,
+                method: 'delete',
+                contentType: 'application/json',
+                // data: JSON.stringify(st),
+                success: function (resp) {
+                    alert(resp)
+                    $("#tbldata").empty();
+                    GetAllRols();
+                }
+            })
+    }
+
+    function AddRols() {
+        $("#cid").val("");
+        $("#cname").val("");
+        $("#savebtn").show();
+        $("#myModal").modal('show');
+
+        $("#editbtn").hide();
+    }
+
+    function saveRols() {
+
+        $("#myModal").modal('hide');
+        var cname = $("#cname").val();
+
+        var _json = { "role": cname};
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/rols",
+                method: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(_json),
+                success: function (resp) {
+                    alert(resp);
+                    $("#tbldata").empty();
+                    GetAllRols();
+                }
+            })
+
+    }
+
+</script>
+
+<button class="btn btn-primary" onclick="AddRols()">Add role</button>
+
+<div class="m-4">
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Role</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+
+                    <table class="table table-borderless">
+
+                        <tr>
+                            <td> <label class="label">role id</label></td>
+                            <td> <input class="form-control" type="text" id="cid" placeholder="id" disabled /></td>
+                        </tr>
+
+                        <tr>
+                            <td> <label class="label-info">Role</label></td>
+                            <td><input type="text" id="cname" class="form-control" /></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savebtn">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="editbtn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <table class="table border-1">
+        <thead>
+            <tr>
+                <td>Sr no</td>
+                <td>Role</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="tbldata">
+        </tbody>
+    </table>
+</div>
+
+
+

@@ -1,0 +1,287 @@
+﻿
+@{
+    ViewBag.Title = "experienceDetails";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<h2>experienceDetails</h2>
+
+<script>
+    $(document).ready(function () {
+        GetAlluser()
+        GetAllDesignation()
+        GetAllDetails();
+        $("#savebtn").click(function () {
+            saveDetails();
+        })
+
+        $("#editbtn").click(function () {
+          
+            editDetails();
+        })
+
+    })
+
+    function GetAlluser() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/userdetails",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    $.each(resp, function (i, d) {
+                        // $("#ddstate").append("<option " + d.state_id + ">" + d.state_name + "</option>")
+                        $("#dduser").append("<option value='" + d.user_id + "'>" + d.first_name + "</option>");
+
+                    })
+                }
+            })
+    }
+    function GetAllDesignation() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/designation",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    $.each(resp, function (i, d) {
+                        // $("#ddstate").append("<option " + d.state_id + ">" + d.state_name + "</option>")
+                        $("#ddde").append("<option value='" + d.designation_id + "'>" + d.designation_name + "</option>");
+
+                    })
+                }
+            })
+    }
+
+    function GetAllDetails() {
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/experience",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+                    console.log(resp);
+                    $.each(resp, function (i, d) {
+                        $("#tbldata").append("<tr><td>" + (i + 1) + "</td> <td>" + d.company_name + "</td><td> " + d.from_year + "</td><td>" + d.to_year + "</td><td>" + d.job_description + "</td > <td>  <button class='btn btn-primary' onclick='Edit(" + d.experience_id + ", \"" + d.company_name + "\", \"" + d.from_year + "\", \"" + d.to_year + "\", \"" + d.job_description + "\")'>Edit</button>  <button class='btn btn-danger' onclick='Delete(" + d.experience_id + ")'>Delete</button> </td> </tr>")
+                    })
+                }
+            })
+    }
+
+    function editDetails() {
+       // var cid = $("#cid").val();
+        //var cname = $("#cname").val();
+   
+        var id=$("#id").val();
+        var cname=$("#cname").val();
+        var fyear=$("#fyear").val();
+        var tyear= $("#tyear").val();
+        var jd=$("#jd").val();
+
+        var _json = { "experience_id": id, "company_name": cname, "from_year": fyear, "to_year": tyear, "job_description": jd };
+       //var _json = { "user_id": id, "first_name": fname, "middle_name": mname, "last_name": lname, "local_address": laddress, "birth_date": bdate, "joining_date": jdate, "user_photo": pic, "mobile_number": mobile, "email_address": email, "user_name": uname, "password": pass };
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/experience",
+                method: 'put',
+                contentType: 'application/json',
+                data: JSON.stringify(_json),
+                success: function (resp) {
+                    alert(resp);
+                    $("#myModal").modal('hide');
+                    $("#tbldata").empty();
+                    GetAllDetails();
+                    //$("#cid").val("");
+                    //$("#cname").val("");
+
+                    $("#id").val("");
+                    $("#cname").val("");
+                    $("#fyear").val("");
+                    $("#tyear").val("");
+                    $("#jd").val("");
+                }
+            })
+    }
+
+    function Edit(id, cname, fyear, tyear, jd) {
+       
+        $("#id").val(id);
+        $("#cname").val(cname);
+        $("#fyear").val(fyear);
+        $("#tyear").val(tyear);
+        $("#jd").val(jd);
+
+
+        $("#editbtn").show();
+        $("#savebtn").hide();
+        $(".drop").hide();
+        $("#myModal").modal('show');
+
+    }
+
+    function Delete(id) {
+
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/experience/" + id,
+                method: 'delete',
+                contentType: 'application/json',
+                // data: JSON.stringify(st),
+                success: function (resp) {
+                    alert(resp)
+                    $("#tbldata").empty();
+                    GetAllDetails();
+                }
+            })
+    }
+
+
+
+    function AddExperienceDetails() {
+      //  $("#cid").val("");
+       // $("#cname").val("");
+
+        $("#id").val("");
+        $("#cname").val("");
+        $("#fyear").val("");
+        $("#tyear").val("");
+        $("#jd").val("");
+
+
+        $(".drop").show();
+        $("#savebtn").show();
+        $("#myModal").modal('show');
+
+        $("#editbtn").hide();
+    }
+
+    function saveDetails() {
+
+        $("#myModal").modal('hide');
+       // var select = $("#ddstate").val();
+        var user = $("#dduser").val();
+        var de = $("#ddde").val();
+
+       // var cname = $("#cname").val();
+
+        var cname = $("#cname").val();
+        var fyear = $("#fyear").val();
+        var tyear = $("#tyear").val();
+        var jd = $("#jd").val();
+
+        
+
+        var _json = { "user_id": user, "designation_id": de, "company_name": cname, "from_year": fyear, "to_year": tyear, "job_description": jd };
+       
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/experience",
+                method: 'post',
+                contentType: 'application/json',
+                data: JSON.stringify(_json),
+                success: function (resp) {
+                    alert(resp);
+                    $("#tbldata").empty();
+                    GetAllDetails();
+                }
+            })
+       
+    }
+
+</script>
+
+
+<button class="btn btn-secondary" onclick="AddExperienceDetails()">Add Experience</button>
+
+<div class="m-4">
+    <div id="myModal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-xl ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark"> Experience Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+
+                    <table class="table table-borderless">
+                        <tr>
+                            <td> <label class="label">experience id</label></td>
+                            <td> <input class="form-control" type="text" id="id" placeholder="id" disabled />  </td>
+                            <td colspan="4"></td>
+                        </tr>
+
+
+
+                        <tr class="drop">
+                            <td> <label class="label">select User</label> </td>
+                            <td>
+                                <select id="dduser" class="form-select" aria-label="Default select example">
+                                    <option>select</option>
+                                </select>
+                            </td>
+
+
+                            <td> <label class="label">select Designation</label> </td>
+                            <td>
+                                <select id="ddde" class="form-select" aria-label="Default select example">
+                                    <option>select</option>
+                                </select>
+                            </td>
+
+
+                        </tr>
+
+
+
+                        <tr>
+                            <td> <label class="label-info">Company Name</label></td>
+                            <td><input type="text" id="cname" class="form-control" /></td>
+
+
+
+                            <td> <label class="label-info">From year</label></td>
+                            <td><input type="text" id="fyear" class="form-control" /></td>
+
+
+
+                            <td> <label class="label-info">To year </label></td>
+                            <td><input type="text" id="tyear" class="form-control" /></td>
+                        </tr>
+
+                        <tr>
+                            <td> <label class="label-info">job description</label></td>
+                            <td><input type="text" id="jd" class="form-control" /></td>
+
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savebtn">Save changes</button>
+                    <button type="button" class="btn btn-primary" id="editbtn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr class="bg-info">
+                <td>Sr no</td>
+                <td>Company Name</td>
+                <td>From Year</td>
+                <td>To Year</td>
+                <td>Job descrption</td>
+
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="tbldata">
+        </tbody>
+    </table>
+</div>

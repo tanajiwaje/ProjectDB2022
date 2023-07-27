@@ -1,0 +1,563 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+
+    <!--  <link href="~/Content/Mycss2.css" rel="stylesheet" />-->
+ 
+
+    <script>
+        var gcode = "hello";
+
+        $(document).ready(function ()
+        {
+       
+            $("#Save").click(function () {
+                AddUser();
+            })
+
+            $("#login").click(function () {
+                Login();
+            })
+            GetAllGender();
+            GetAllLocation();
+
+
+        })
+        
+
+        function GetAllGender() {
+            $.ajax(
+                {
+                    url: "https://localhost:44319/api/Master/gender",
+                    method: 'get',
+                    contentType: 'application/json',
+                    success: function (resp) {
+                        $.each(resp, function (i, d) {
+                            $("#ddgender").append("<option value='" + d.gender_id + "'>" + d.gender_name + "</option>");
+
+                        })
+                    }
+                })
+        }
+
+        function GetAllLocation() {
+            $.ajax(
+                {
+                    url: "https://localhost:44319/api/Master/location",
+                    method: 'get',
+                    contentType: 'application/json',
+                    //data: JSON.stringify(st),
+                    success: function (resp) {
+                        $.each(resp, function (i, d) {
+                            // $("#ddstate").append("<option " + d.state_id + ">" + d.state_name + "</option>")
+                            $("#ddlocation").append("<option value='" + d.location_id + "'>" + d.location_name + "</option>");
+
+                        })
+                    }
+                })
+        }
+
+        //by using autogard provider 
+        function Login() {
+            var user = $("#txtuser").val();
+            var pass = $("#txtpass").val();
+            
+          
+            var authData = "UserName=" + user + "&Password=" + pass + "&grant_type=password";
+
+            $.ajax({
+                url: "https://localhost:44319/token",
+                method: 'post',
+                contentType: 'application/json',
+                data: authData,
+                success: function (resp) {
+                    alert("successful");
+                    console.log(resp);
+                    localStorage.setItem("token", resp.access_token);
+                    window.location.href = "/Admin/User/Dashboard";
+                },
+                error: function (err) {
+                    alert("Check user id and password")
+                    $("#txtuser").val("");
+                    $("#txtpass").val("");
+                }
+            });
+
+        }  
+
+      /*  function AddUser()
+        {
+           
+                var gender = $("#ddgender").val();
+                var location = $("#ddlocation").val();
+                var role = 4;
+
+                var currentDate = new Date();
+                var day = currentDate.getDate();
+                var month = currentDate.getMonth() + 1;
+                var year = currentDate.getFullYear();
+                var jdate = month + '/' + day + '/' + year;
+                var fname = $("#fname").val();
+                var mname = $("#mname").val();
+                var lname = $("#lname").val();
+                var laddress = $("#laddress").val();
+                var bdate = $("#bdate").val();
+                var pic = $("#profile_photo").val();
+                var mobile = $("#mobile").val();
+                var email = $("#email").val();
+                var uname = $("#uname").val();
+                var pass ="";
+                var premium = 0;
+
+                var _json = {
+                    "first_name": fname,
+                    "middle_name": mname,
+                    "last_name": lname,
+                    "gender_id": gender,
+                    "location_id": location,
+                    "local_address": laddress,
+                    "role_id": role,
+                    "birth_date": bdate,
+                    "joining_date": jdate,
+                    "user_photo": pic,
+                    "mobile_number": mobile,
+                    "email_address": email,
+                    "user_name": uname,
+                    "is_permium": premium,
+                    "password": pass
+                };
+
+            $.ajax(
+                {
+   
+                    url: "https://localhost:44319/api/master/userdetails",
+                    method: 'post',
+                    contentType: 'application/json',
+                    data: JSON.stringify(_json),
+                    success: function (resp) {
+                        alert(resp);
+                        console.log(resp);
+
+                    },
+                   error: function (xhr, status, error) {
+                        alert("Error occurred: " + error);
+                    }
+                });
+
+                $("#fname").val("");
+                $("#mname").val("");
+                $("#lname").val("");
+                $("#laddress").val("");
+                $("#bdate").val("");
+                $("#mobile").val("");
+                $("#email").val("");
+                $("#uname").val("");
+
+        }  */
+
+        function AddUser() {
+           /* {
+                var gender = $("#ddgender").val();
+                var location = $("#ddlocation").val();
+                var role = 4;
+
+                var currentDate = new Date();
+                var day = currentDate.getDate();
+                var month = currentDate.getMonth() + 1;
+                var year = currentDate.getFullYear();
+                var jdate = month + '/' + day + '/' + year;
+                var fname = $("#fname").val();
+                var mname = $("#mname").val();
+                var lname = $("#lname").val();
+                var laddress = $("#laddress").val();
+                var bdate = $("#bdate").val();
+                var pic = $("#profile_photo")[0].files[0]; // Get the file data
+                var mobile = $("#mobile").val();
+                var email = $("#email").val();
+                var uname = $("#uname").val();
+                var pass = "";
+                var premium = 0;
+            }*/
+
+            var currentDate = new Date();
+
+            // Format the date as per your requirement
+            var formattedDate = currentDate.toLocaleDateString();
+
+            
+
+            // Get the selected location value
+          
+            var gender = $("#ddgender").val();;
+            var location = $("#ddlocation").val();
+            var role = 4;
+            var fname = $("#fname").val();
+            var mname = $("#mname").val();
+            var lname = $("#lname").val();
+            var laddress = $("#add").val();
+            var bdate = $("#birthdate").val();
+            var pic = $("#profile_photo")[0].files[0]; // Get the file data
+            var mobile = $("#mno").val();
+            var email = $("#email").val();
+            var uname = $("#uname").val();
+            var pass = ""; // You need to set the password here
+            var premium = 0; // Set the premium value as needed
+            var joindate = formattedDate;
+
+            var formData = new FormData();
+            formData.append("gender_id", gender);
+            formData.append("location_id", location);
+            formData.append("role_id", role);
+            formData.append("first_name", fname);
+            formData.append("middle_name", mname) ;
+            formData.append("last_name", lname);
+            formData.append("local_address", laddress);
+            formData.append("Birth_date", bdate);
+            formData.append("user_photo", pic);
+            formData.append("mobile_number", mobile);
+            formData.append("email_address", email);
+            formData.append("user_name", uname);
+            formData.append("password", pass);
+            formData.append("premium", premium);
+            formData.append("joining_date", joindate);
+            formData.append("joining_date", joindate);
+
+           // console.log(formData);
+
+            $.ajax({
+                url: "https://localhost:44319/api/master/userdetails", // Update the API endpoint URL
+                method: "post",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (resp) {
+                    alert(resp);
+                    console.log(resp);
+                },
+                error: function (xhr, status, error) {
+                    alert("Error occurred: " + error);
+                }
+            });
+        }
+    </script>
+    <style>
+        .box-21 {
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+
+    <!--   <div class="container">
+            <div class="body d-md-flex align-items-center justify-content-between">
+                <div class="box-1 mt-md-0 mt-5">
+                    <img src="~/Areas/Admin/Images/pic3.jpg"
+                         class="" alt="">
+                </div>
+                <div class="box-2 d-flex flex-column h-100">
+
+                    <table class="table t1 table-borderless">
+                        <tr>
+                            <th><h2 class="h2 text-center">User detail</h2></th>
+                        </tr>
+
+                        <tbody id="first">
+
+                            <tr>
+                                <td><input type="text" placeholder="first name" id="fname" class="form-control"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="middle name" id="mname" class="form-control"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" placeholder="last name" id="lname" class="form-control"></td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <select id="ddgender" class="form-select" aria-label="Default select example">
+                                        <option hidden>gender</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="date" class="form-control" id="bdate"></td>
+                            </tr>
+
+                        </tbody>
+
+                        <tbody id="second">
+
+
+                            <tr>
+                                <td><input type="email" placeholder="email" id="email" class="form-control" required></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="text" placeholder="Mobile Number" class="form-control" id="mobile"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="text" placeholder="user name" id="uname" class="form-control"></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td>
+                                    <select id="ddlocation" class="form-select" aria-label="Default select example">
+                                        <option hidden>Location</option>
+                                    </select>
+                                </td>
+                            </tr>
+
+
+
+                            <tr>
+                                <td><input type="text" placeholder="address" id="laddress" class="form-control"></td>
+                            </tr>
+
+                            <tr>
+                                <td><input type="file"  id="profile_photo" class="form-control"></td>
+                            </tr>
+
+
+
+
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td>
+                                    <input type="button" value="Prev" class="btn bg-info  " id="Prev" />
+                                    <input type="button" value="Next" class="btn bg-info  " id="Next" />
+                                    <input type="button" value="Save" class="btn bg-info  " id="Save" />
+                                </td>
+                            </tr>
+
+                        </tfoot>
+
+
+
+                    </table>
+
+                    <div class="t2">
+
+                        <table class="table t2 table-borderless">
+                            <thead>
+                                <tr>
+                                    <th> <h2 class="h2 text-center">Login Form</h2></th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+                                <tr>
+                                    <td> <input type="text" placeholder="user_name" class="form-control" id="getuser" /> </td>
+                                </tr>
+
+                                <tr>
+
+                                    <td> <input type="password" placeholder="password" class="form-control" id="getpass" /> </td>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td>
+                                        <input type="button" id="login" value="Login" class="btn btn-info" />
+                                        <input type="button" id="new" value="  create new account   " class="btn btn-info" />
+                                    </td>
+
+                                </tr>
+
+                            </tfoot>
+                        </table>
+
+
+                       <div>
+                           <p style="color:red" id="err"></p>
+                       </div>
+
+
+                    </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+    -->
+
+      
+
+    <div class="row">
+
+        <div class="col-md-3 container-fluid">
+            <form id="userForm" method="post" enctype="multipart/form-data">
+                <table class="table t1 table-borderless">
+                    <tr>
+                        <th><h2 class="h2 text-center">Login</h2></th>
+                    </tr>
+
+                    <tr>
+                        <td>User Name:</td>
+                        <td><input type="text" placeholder="username" id="txtuser" class="form-control"></td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td><input type="password" placeholder="password" id="txtpass" class="form-control"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><input type="button" value="Login" id="login" class="btn btn-primary"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-7 container-fluid">
+            <form id="userForm" method="post" enctype="multipart/form-data">
+                <table class="table t1 table-borderless">
+                    <tr>
+                        <th><h2 class="h2"><u>*Sign Up*</u></h2></th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>First name:</label>
+                            <input type="text" placeholder="Enter first name" name="first_name" id="fname" class="form-control">
+                        </td>
+
+                        <td>
+                            <label>Middle name:</label>
+                            <input type="text" placeholder="Enter middle name" name="middle_name" id="mname" class="form-control">
+                        </td>
+
+                        <td>
+                            <label>Last name:</label>
+                            <input type="text" placeholder="Enter last name" name="last_name" id="lname" class="form-control">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label>Choose gender:</label>
+                            <select name="gender_id" id="ddgender" class="form-select" aria-label="Default select example">
+                                <option hidden>gender</option>
+                            </select>
+                        </td>
+
+                        @*<td><input type="date" class="form-control" name="Birth date"></td>*@
+                       
+                       <td>
+                        <label>Date of birth:</label>
+                        <input type="date" class="form-control" name="Birth date" id="birthdate"></td>
+
+                       <td>
+                           <label>Email address:</label>
+                           <input type="email" placeholder="Enter email" name="Enter email address" id="email" class="form-control" required>
+                       </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label>Mobile no.:</label>
+                            <input type="text" placeholder="Enter mobile Number" class="form-control" id="mno" name="mobile_number">
+                        </td>
+
+                        <td>
+                            <label>Username:</label>
+                            <input type="text" placeholder="Enter user name" name="user_name"  id="uname" class="form-control">
+                        </td>
+
+                        <td>
+                            <label>Choose location:</label>
+                            <select name="location_id" id="ddlocation" class="form-select" aria-label="Default select example">
+                                <option hidden>Location</option>
+                            </select>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <label>Enter address:</label>
+                            <input type="text" placeholder="Enter address" name="local_address" id="add" class="form-control">
+                        </td>
+
+                        <td>
+                            <label>Profile:</label>
+                            <input type="file" name="user_photo" class="form-control" id="profile_photo">
+                        </td>
+                    </tr>
+
+
+
+                    <tr>
+                        <td>
+                            <!-- Use the submit button to trigger form submission -->
+                            <input type="button" value="Submit" id="Save" class="btn btn-success" />
+                        </td>
+                    </tr>
+
+                </table>
+            </form>
+
+        </div>
+
+
+    </div>
+         
+                
+        
+      
+
+
+</body>
+</html>
+
+<!--
+    for backup purpose
+
+  <table class="table t2 table-borderless">
+                      <thead>
+                          <tr>
+                              <th> <h4 class="h4 text-center">Login</h4></th>
+                          </tr>
+                      </thead>
+
+
+                      <tbody>
+                          <tr>
+                              <td> <input type="text" placeholder="user_name" class="form-control"  id="getuser"/> </td>
+                          </tr>
+
+                          <tr>
+                              <td> <input type="password" placeholder="password" class="form-control" id="getpass"/> </td>
+                          </tr>
+                      </tbody>
+
+                      <tfoot>
+                          <tr>
+                              <td><input type="button" id="login" value="Login" class="btn btn-info" />
+                                  <input type="button" id="new" value="  create new account   " class="btn btn-info" />
+                              </td>
+
+                          </tr>
+
+
+
+                      </tfoot>
+
+                  </table>
+
+-->

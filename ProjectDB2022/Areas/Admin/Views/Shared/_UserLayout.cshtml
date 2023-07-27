@@ -1,0 +1,68 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>_AdminLayout</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+
+    <style>
+
+        .row1 {
+            border: 1px solid green;
+        }
+
+        .col-2 {
+            border: 1px solid black;
+        }
+
+        .list-group {
+            padding: -10px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div>
+        <nav id="navbar" class="navbar navbar-dark bg-primary">
+            <div class="d-flex justify-content-between w-100">
+                <a class="navbar-brand">CIIT Coder</a>
+                <ul class="list-group">
+                    <li class="list-group-item">@Html.ActionLink("Logout", "Logout", "User")</li>
+                    
+
+
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2 h-100 d-inline-block">
+
+               
+
+
+            </div>
+
+            <div class="col-9">
+
+                @RenderBody()
+
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

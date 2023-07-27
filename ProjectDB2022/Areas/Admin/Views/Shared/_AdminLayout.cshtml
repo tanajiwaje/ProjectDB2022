@@ -1,0 +1,91 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>_AdminLayout</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jquery")
+
+    <style>
+
+        .row1 {
+            border: 1px solid green;
+        }
+
+        .col-2 {
+            border: 1px solid black;
+        }
+
+        .list-group {
+            padding: -10px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div>
+        <nav id="navbar" class="navbar navbar-dark bg-primary">
+            <div class="d-flex justify-content-between w-100">
+                <a class="navbar-brand">CIIT Coder</a>
+                <form class="form-inline">
+                    <button class="btn text-dark" type="submit">Login</button>
+                </form>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2 h-100 d-inline-block">
+
+                <h3>User</h3>
+                <ul class="list-group">
+                    <li class="list-group-item" hidden>@Html.ActionLink("User Details", "UserDetails", "User")</li>
+                    <li class="list-group-item">@Html.ActionLink("Active Users", "CheckUsers", "User")</li>
+                    <li class="list-group-item">@Html.ActionLink("Check Posts", "CheckUsers", "User")</li>
+                    <li class="list-group-item" hidden> @Html.ActionLink("User Qualification", "UserQualification", "User")</li>
+                    <li class="list-group-item" hidden>@Html.ActionLink("experienceDetails", "experienceDetails", "User")</li>
+                    <li class="list-group-item" hidden>@Html.ActionLink("expertise", "ProfessionExpertise", "User")</li>
+
+
+                </ul>
+
+
+                <h3>Master</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">@Html.ActionLink("State", "State", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("Designations", "Designations", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("Genders", "Genders", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("PostCatagories", "PostCatagories", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("Qualification", "Qualification", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("Roles", "Roles", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("Topic", "Topic", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("Content", "TopicContent", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("city", "City", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("location", "Location", "Master")</li>
+                    <li class="list-group-item">@Html.ActionLink("specialization", "Specialization", "Master")</li>
+                </ul>
+
+
+            </div>
+
+            <div class="col-9">
+
+                @RenderBody()
+
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

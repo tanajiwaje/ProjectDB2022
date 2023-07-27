@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+    <!-- Include the jwt-decode library -->
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script src="~/Scripts/jwt-decode.esm.js"></script>
+</head>
+<body>
+    <button id="btn">Click Me</button>
+
+    <script>
+        import jwt_decode from "jwt-decode";
+        // Separate function to test jwt_decode
+        function testJwtDecode() {
+            var token = "YOUR_VALID_JWT_TOKEN"; // Replace this with your actual JWT token
+            var decodeToken = jwt_decode(token);
+
+            // Check if decodeToken is an object (indicating successful decoding)
+            if (typeof decodeToken === 'object') {
+                var userId = decodeToken.user_id;
+                console.log("Decoding successful!");
+                console.log("Decoded token: ", decodeToken);
+                console.log("User ID: ", userId);
+            } else {
+                console.log("Decoding failed. Invalid or expired token.");
+            }
+        }
+
+        // Attach the test function to the button click event
+        $(document).ready(function () {
+            $("#btn").click(function () {
+                testJwtDecode();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1101 @@
+﻿<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Final - LinkedIn UI Clone</title>
+    <script src="~/Scripts/jquery-3.7.0.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script>
+        $(document).ready(function () {
+
+
+            GetDetails();
+            $("#logout").click(function () {
+                logout();
+            })
+            $("#profile").click(function () {
+                $("#myModal").modal('show');
+            })
+
+            $("#btnpassword").click(function () {
+                $("#myModal").modal('hide');
+                $("#passwordmodal").modal('show');
+                
+            })
+
+            $("#btnupdate").click(function () {
+                UpdatePassword();
+            })
+        })
+
+
+
+
+
+        function UpdatePassword()
+        {
+            var npass = $("#newpass").val();
+            var cpass = $("#confirmpass").val();
+
+            if (npass !== cpass) {
+                // Prevent form submission
+                alert("Password mismatched");
+            } else if (npass.length < 8 || !/[A-Z]/.test(npass) || !/\d/.test(npass) || !/[#$!%*?&]/.test(npass)) {
+                // Prevent form submission
+                alert("Password must be at least 8 characters long and contain at least one uppercase letter, one digit, and one special character.");
+            }
+            else {
+
+                $.ajax(
+                    {
+                        url: "https://localhost:44319/api/Master/location",
+                        method: 'get',
+                        contentType: 'application/json',
+                        //data: JSON.stringify(st),
+                        success: function (resp) {
+                            $.each(resp, function (i, d) {
+                                // $("#ddstate").append("<option " + d.state_id + ">" + d.state_name + "</option>")
+                                $("#ddlocation").append("<option value='" + d.location_id + "'>" + d.location_name + "</option>");
+
+                            })
+                        }
+                    })
+
+            }
+
+
+        }
+
+
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "/Admin/User/Login";
+        }
+
+        function GetDetails() {
+            var token = localStorage.getItem("token");
+            $.ajax(
+                {
+                    url: "https://localhost:44319/api/userdetailsid",
+                    method: 'get',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'content-type': 'application/json'
+                    },
+                    success: function (resp) {
+                        console.log(resp);
+
+                        $(".first_name").append(resp.first_name);
+                        $("#first_name").val(resp.first_name);
+                        $(".last_name").val(resp.last_name);
+
+                        $("#lastname").val(resp.last_name);
+                        var birthDate = new Date(resp.birth_date);
+                        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+                        var dateString = birthDate.toLocaleDateString(undefined, options);
+                        $("#inputBirthday").val(dateString);
+                        $("#inputEmailAddress").val(resp.email_address);
+                        $("#inputLocation").val(resp.location_name);
+                        $("#inputPhone").val(resp.mobile_number);
+                        $("#inputLocal").val(resp.local_address);
+
+                        $("#inputUsername").val(resp.user_name);
+
+
+                        $("#email").append(resp.email_address);
+                        var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
+                        var profilePictureUrl = "~/Uploads/" + profilePictureName;
+                        $(".img-account-profile").attr("src", profilePictureUrl);
+
+
+                        $("#oldpass").val(resp.password);
+                    },
+
+                })
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* file upload button */
+        input[type="file"]::file-selector-button {
+            border-radius: 4px;
+            padding: 0 16px;
+            height: 40px;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.16);
+            box-shadow: 0px 1px 0px rgba(0, 0, 0, 0.05);
+            margin-right: 16px;
+            transition: background-color 200ms;
+        }
+
+            /* file upload button hover state */
+            input[type="file"]::file-selector-button:hover {
+                background-color: #f3f4f6;
+            }
+
+            /* file upload button active state */
+            input[type="file"]::file-selector-button:active {
+                background-color: #e5e7eb;
+            }
+
+        body {
+            background-color: #f3f2ef;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+        }
+
+        .header__left img {
+            object-fit: contain;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            justify-content: space-evenly;
+            border-bottom: 0.1px solid lightgray;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            width: 100%;
+            background-color: white;
+           
+        }
+
+        .header__left {
+            display: flex;
+        }
+
+        .header__right {
+            display: flex;
+        }
+
+        .header__first {
+            display: flex;
+            border: 1px solid red;
+            height: 50px;
+            width: 50px;
+            display: none;
+            border: 1px solid red;
+
+        }
+
+        .header__search {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            height: 22px;
+            color: gray;
+            background-color: #eef3f8;
+        }
+
+            .header__search > input {
+                outline: none;
+                border: none;
+                background: none;
+            }
+
+        .headerOption {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 20px;
+            color: gray;
+            cursor: pointer;
+        }
+
+            .headerOption:hover {
+                color: black;
+            }
+
+            .headerOption h3 {
+                font-size: 12px;
+                margin-top: 10px;
+                font-weight: 400;
+            }
+
+        .headerOption__icon {
+            margin-right: 5px;
+            height: 20px;
+            width: 20px;
+        }
+
+        /* Main Body */
+        .body__main {
+            display: flex;
+            margin-top: 10px;
+            max-width: 1200px;
+            margin-left: 20px;
+            margin-right: 20px;
+
+        }
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 80px;
+            flex: 0.2;
+            border-radius: 10px;
+            text-align: center;
+            height: fit-content;
+        }
+
+        .sidebar__top > img {
+            margin-bottom: -20px;
+            width: 100%;
+            height: 60px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            object-fit: cover;
+        }
+
+        .sidebar__top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid lightgray;
+            border-bottom: 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            background-color: white;
+            padding-bottom: 10px;
+            box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar__topAvatar {
+            font-size: 40px;
+        }
+
+        .sidebar__stats {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid lightgray;
+            background-color: white;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar__stat {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            .sidebar__stat > p {
+                color: gray;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+        .sidebar__statNumber {
+            font-weight: bold;
+            color: #0a66c2 !important;
+        }
+
+        .sidebar__top > h4 {
+            color: gray;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .sidebar__top > h2 {
+            font-size: 18px;
+        }
+
+        .sidebar__bottom {
+            text-align: left;
+            padding: 10px;
+            border: 1px solid lightgray;
+            background-color: white;
+            border-radius: 10px;
+            margin-top: 10px;
+            box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar__recentItem {
+            display: flex;
+            font-size: 13px;
+            color: gray;
+            font-weight: bolder;
+            cursor: pointer;
+            margin-bottom: 5px;
+            padding: 5px;
+        }
+
+            .sidebar__recentItem:hover {
+                background-color: whitesmoke;
+                border-radius: 10px;
+                cursor: pointer;
+                color: black;
+            }
+
+        .sidebar__hash {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .sidebar__bottom > p {
+            font-size: 14px;
+            padding-bottom: 10px;
+        }
+
+        /* Feed */
+        .feed {
+            flex: 0.6;
+            margin: 0 20px;
+            max-width: 800px;
+
+        }
+
+        .feed__inputContainer {
+            background-color: white;
+            padding: 10px;
+            padding-bottom: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+           
+        }
+
+        .feed__input {
+            border: 1px solid lightgray;
+            border-radius: 30px;
+            display: flex;
+            padding: 10px;
+            color: gray;
+            padding-left: 15px;
+
+        }
+
+            .feed__input > form {
+                display: flex;
+                width: 100%;
+            }
+
+                .feed__input > form > input {
+                    border: none;
+                    flex: 1;
+                    margin-left: 10px;
+                    outline-width: 0;
+                    font-weight: 600;
+                }
+
+                .feed__input > form > button {
+                    display: none;
+                }
+
+        .feed__inputOptions {
+            display: flex;
+            justify-content: space-evenly;
+            
+        }
+
+        .inputOption {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            color: gray;
+            padding: 10px;
+            cursor: pointer;
+
+        }
+
+            .inputOption:hover {
+                background-color: whitesmoke;
+                border-radius: 10px;
+            }
+
+            .inputOption > h4 {
+                margin-left: 5px;
+                font-size:20px;
+            }
+
+        /* Post */
+        .post {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .post__header {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .post__info {
+            margin-left: 10px;
+        }
+
+            .post__info > p {
+                font-size: 12px;
+                color: gray;
+            }
+
+            .post__info > h2 {
+                font-size: 15px;
+            }
+
+        /* widgets */
+        .widgets {
+            position: sticky;
+            top: 80px;
+            flex: 0.2;
+            background-color: white;
+            border-radius: 10px;
+            border: 1px solid lightgray;
+            height: fit-content;
+            padding-bottom: 10px;
+            box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .widgets__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+        }
+
+            .widgets__header > h2 {
+                font-size: 16px;
+                font-weight: 400;
+            }
+
+        .widgets__article {
+            display: flex;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+            .widgets__article:hover {
+                background-color: whitesmoke;
+            }
+
+        .widgets__articleLeft {
+            color: #0177b7;
+            margin-right: 5px;
+        }
+
+            .widgets__articleLeft .material-icons {
+                font-size: 15px;
+            }
+
+        .widgets__articleRight {
+            flex: 1;
+        }
+
+            .widgets__articleRight > h4 {
+                font-size: 14px;
+            }
+
+            .widgets__articleRight > p {
+                font-size: 12px;
+                color: gray;
+            }
+    </style>
+</head>
+<body>
+    <!-- Header Starts -->
+    <div class="header">
+        <div class="header__first">
+            <img src="~/Areas/Admin/Images/social-media.png" class="" alt="">
+        </div>
+
+        <div class="header__left">
+
+        </div>
+
+        <div class="header__right">
+            <div class="headerOption">
+                <i class="material-icons headerOption__icon"> home </i>
+                <h3>Home</h3>
+            </div>
+            <div class="headerOption">
+                <i class="material-icons headerOption__icon"> supervisor_account </i>
+                <h3>My Network</h3>
+            </div>
+            <div class="headerOption">
+                <i class="material-icons headerOption__icon"> business_center </i>
+                <h3>Jobs</h3>
+            </div>
+            <div class="headerOption">
+                <i class="material-icons headerOption__icon"> chat </i>
+                <h3>Messaging</h3>
+            </div>
+            <div class="headerOption">
+                <i class="material-icons headerOption__icon"> notifications </i>
+                <h3>Notifications</h3>
+            </div>
+            <div class="headerOption">
+                <i class="material-icons headerOption__icon" id="profile"> account_circle </i>
+                <h3 class="first_name"></h3>
+            </div>
+            <div class="headerOption" id="logout">
+                <i class="material-icons headerOption__icon"> arrow_forward </i>
+                <h3>Logout</h3>
+            </div>
+        </div>
+    </div>
+    <!-- Header Ends -->
+    <!-- Main Body Starts -->
+    <div class="body__main">
+        <!-- Sidebar Starts -->
+        <div class="sidebar">
+            <div class="sidebar__top">
+                <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMjA3fDB8MXxhbGx8fHx8fHx8fA&ixlib=rb-1.2.1&q=80&w=1080" alt="" />
+                <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                <h2> <span class="first_name"></span>  </h2>
+                <h4 id="email"></h4>
+            </div>
+
+            <div class="sidebar__stats">
+                <div class="sidebar__stat">
+                    <p>Who Viewed You</p>
+                    <p class="sidebar__statNumber">2,453</p>
+                </div>
+                <div class="sidebar__stat">
+                    <p>Views on post</p>
+                    <p class="sidebar__statNumber">2,650</p>
+                </div>
+            </div>
+
+            <div class="sidebar__bottom">
+                <p>Recent</p>
+                <div class="sidebar__recentItem">
+                    <span class="sidebar__hash">#</span>
+                    <p>reactjs</p>
+                </div>
+                <div class="sidebar__recentItem">
+                    <span class="sidebar__hash">#</span>
+                    <p>programming</p>
+                </div>
+                <div class="sidebar__recentItem">
+                    <span class="sidebar__hash">#</span>
+                    <p>softwareengineering</p>
+                </div>
+                <div class="sidebar__recentItem">
+                    <span class="sidebar__hash">#</span>
+                    <p>design</p>
+                </div>
+                <div class="sidebar__recentItem">
+                    <span class="sidebar__hash">#</span>
+                    <p>developer</p>
+                </div>
+            </div>
+        </div>
+        <!-- Sidebar Ends -->
+        <!-- Feed Starts -->
+        <div class="feed">
+            <div class="feed__inputContainer">
+                <div class="feed__input">
+                    <i class="material-icons"> create </i>
+                    <form>
+                        <input type="text" />
+                        <button type="submit">Send</button>
+                    </form>
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: #70b5f9" class="material-icons"> insert_photo </i>
+                        <h4>Photo</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: #e7a33e" class="material-icons"> subscriptions </i>
+                        <h4>Video</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: #c0cbcd" class="material-icons"> event_note </i>
+                        <h4>Event</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: #7fc15e" class="material-icons"> calendar_view_day </i>
+                        <h4>Write Article</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                    <img height="100" width="100" src="~/Areas/Admin/Images/pic3.jpg"
+                         class="" alt="">
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                    <img height="100" width="100" src="~/Areas/Admin/Images/social-media.png" />
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+            <!-- Post Starts -->
+            <div class="post">
+                <div class="post__header">
+                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                    <div class="post__info">
+                        <h2>Somanath Goudar</h2>
+                        <p>Job Description</p>
+                    </div>
+                </div>
+
+                <div class="post__body">
+                    <p>Message here</p>
+                </div>
+
+                <div class="feed__inputOptions">
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> thumb_up </i>
+                        <h4>Like</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> comment </i>
+                        <h4>Comment</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> share </i>
+                        <h4>Share</h4>
+                    </div>
+                    <div class="inputOption">
+                        <i style="color: gray" class="material-icons"> send </i>
+                        <h4>Send</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- Post Ends -->
+        </div>
+        <!-- Feed Ends -->
+        <!-- Widgets Starts -->
+        <div class="widgets">
+            <div class="widgets__header">
+                <h2>LinkedIn Clone</h2>
+                <i class="material-icons"> info </i>
+            </div>
+            <div class="widgets__article">
+                <div class="widgets__articleLeft">
+                    <i class="material-icons"> fiber_manual_record </i>
+                </div>
+                <div class="widgets__articleRight">
+                    <h4>Coding LinkedIn Clone</h4>
+                    <p>Top news - 4500 readers</p>
+                </div>
+            </div>
+
+            <div class="widgets__article">
+                <div class="widgets__articleLeft">
+                    <i class="material-icons"> fiber_manual_record </i>
+                </div>
+                <div class="widgets__articleRight">
+                    <h4>Coding LinkedIn Clone</h4>
+                    <p>Top news - 4500 readers</p>
+                </div>
+            </div>
+
+            <div class="widgets__article">
+                <div class="widgets__articleLeft">
+                    <i class="material-icons"> fiber_manual_record </i>
+                </div>
+                <div class="widgets__articleRight">
+                    <h4>Coding LinkedIn Clone</h4>
+                    <p>Top news - 4500 readers</p>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+        <!-- Widgets Ends -->
+    </div>
+    <!-- Main Body Ends -->
+    <!--  this modal-->
+
+    <div class="m-4">
+        <div id="myModal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body bg-light">
+
+                        <!-- this is main design page  -->
+
+                        <div class="container-xl px-4 mt-4">
+                            <!-- Account page navigation-->
+
+                            <hr class="mt-0 mb-4">
+                            <div class="row">
+                                <div class="col-xl-4">
+                                    <!-- Profile picture card-->
+                                    <div class="card mb-4 mb-xl-0">
+                                        <div class="card-header">Profile Picture</div>
+                                        <div class="card-body text-center">
+                                            <!-- Profile picture image-->
+                                            <img class="img-account-profile rounded-circle mb-2" src="~/Uploads/" height="150" width="150" alt="">
+                                            <!-- Profile picture help block-->
+                                            <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                                            <!-- Profile picture upload button-->
+                                            <button class="btn btn-primary" type="button">Upload new image</button>
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-success" data-toggle="modal" id="btnpassword" data-target="#exampleModal">
+                                                Change Password
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-8">
+                                    <!-- Account details card-->
+                                    <div class="card mb-4">
+                                        <div class="card-header">Account Details</div>
+                                        <div class="card-body">
+                                            <form>
+                                                <!-- Form Group (username)-->
+                                                <div class="mb-3">
+                                                    <label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
+                                                    <input class="form-control first_name" id="inputUsername" type="text" placeholder="Enter your username" value="username" disabled>
+                                                </div>
+                                                <!-- Form Row-->
+                                                <div class="row gx-3 mb-3">
+                                                    <!-- Form Group (first name)-->
+                                                    <div class="col-md-6">
+                                                        <label class="small mb-1" for="inputFirstName">First name</label>
+                                                        <input class="form-control" id="first_name" type="text" placeholder="Enter your first name" value="Valerie">
+                                                    </div>
+                                                    <!-- Form Group (last name)-->
+                                                    <div class="col-md-6">
+                                                        <label class="small mb-1" for="inputLastName">Last name</label>
+                                                        <input class="form-control" id="lastname" type="text" placeholder="Enter your last name" value="Luna">
+                                                    </div>
+                                                </div>
+                                                <!-- Form Row        -->
+                                                <div class="row gx-3 mb-3">
+                                                    <!-- Form Group (organization name)-->
+                                                    <div class="col-md-6">
+                                                        <label class="small mb-1" for="inputOrgName">Local Address</label>
+                                                        <input class="form-control" id="inputLocal" type="text" placeholder="Enter your organization name" value="Start Bootstrap">
+                                                    </div>
+                                                    <!-- Form Group (location)-->
+                                                    <div class="col-md-6">
+                                                        <label class="small mb-1" for="inputLocation">City</label>
+                                                        <input class="form-control" id="inputLocation" type="text" placeholder="Enter your location" value="San Francisco, CA" disabled>
+                                                    </div>
+                                                </div>
+                                                <!-- Form Group (email address)-->
+                                                <div class="mb-3">
+                                                    <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                                                    <input class="form-control" id="inputEmailAddress" type="email" placeholder="Enter your email address" value="name@example.com" disabled>
+                                                </div>
+                                                <!-- Form Row-->
+                                                <div class="row gx-3 mb-3">
+                                                    <!-- Form Group (phone number)-->
+                                                    <div class="col-md-6">
+                                                        <label class="small mb-1" for="inputPhone">Phone number</label>
+                                                        <input class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number" value="555-123-4567">
+                                                    </div>
+                                                    <!-- Form Group (birthday)-->
+                                                    <div class="col-md-6">
+                                                        <label class="small mb-1" for="inputBirthday">Birthday</label>
+                                                        <input class="form-control" id="inputBirthday" type="text" name="birthday" placeholder="Enter your birthday" value="06/10/1988">
+                                                    </div>
+                                                </div>
+                                                <!-- Save changes button-->
+                                                <button hidden class="btn btn-primary" type="button">Save changes</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="editbtn">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div id="passwordmodal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <label>Old Password</label>
+                    <input type="text" value="" id="oldpass" disabled class="form-control" /><br />
+
+                    <label>New Password</label>
+                    <input type="text" value="" id="newpass" placeholder="Enter new password" class="form-control" /><br />
+
+                    <label>Confirm Password</label>
+                    <input type="password" value="" id="confirmpass" placeholder="Confirm password" class="form-control" /><br />
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="btnupdate">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- password change modal -->
+    <!-- Modal  <div class="modal fade" id="passwordmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+           <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                   <div class="modal-header">
+                       <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                           <span aria-hidden="true">&times;</span>
+                       </button>
+                   </div>
+                   <div class="modal-body">
+                       <label>Old Password</label>
+                       <input type="text" value="" id="oldpass" disabled class="form-control" /><br />
+
+                       <label>New Password</label>
+                       <input type="text" value="" id="newpass" placeholder="Enter new password" class="form-control" /><br />
+
+                       <label>Confirm Password</label>
+                       <input type="password" value="" id="confirmpass" placeholder="Confirm password" class="form-control" /><br />
+
+                   </div>
+                   <div class="modal-footer">
+                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                       <button type="button" class="btn btn-primary">Save changes</button>
+                   </div>
+               </div>
+           </div>
+       </div>
+
+    -->
+    <!-- Button trigger modal -->
+
+
+</body>
+</html>
