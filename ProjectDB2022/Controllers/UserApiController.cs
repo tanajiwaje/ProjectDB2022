@@ -53,6 +53,10 @@ namespace ProjectDB2022.Controllers
         }
 
 
+   public string MynewMethod()
+    {
+               return "newmethod";
+   }
         //////////  api user details /////////////
         ///
         /*  [HttpPost]
