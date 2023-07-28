@@ -11,10 +11,13 @@
         GetAllDetailsActive();
     })
 
+    function get() {
+    }
+
     function GetAllDetails() {
         $.ajax(
             {
-                url: "https://localhost:44319/api/userdetails",
+                url: "https://localhost:44319/api/master/userdetails",
                 method: 'get',
                 contentType: 'application/json',
                 //data: JSON.stringify(st),

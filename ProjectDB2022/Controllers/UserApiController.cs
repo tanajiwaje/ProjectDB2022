@@ -53,16 +53,21 @@ namespace ProjectDB2022.Controllers
             _userProfessionalService = userProfessionalService;
         }
 
-        public string mymethod()
+       
+
+       
+        public void Multiplication()
         {
-            return "hello";
+
         }
 
 
-   public string MynewMethod()
-    {
-               return "newmethodfdssd";
-   }
+        public void Division()
+        {
+
+        }
+
+
         //////////  api user details /////////////
         ///
         /*  [HttpPost]

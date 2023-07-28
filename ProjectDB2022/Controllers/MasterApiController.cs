@@ -108,9 +108,9 @@ namespace ProjectDB2022.Controllers
             if (imageFile.ContentLength > 0)
             {
               string imgname = userdetails.first_name + Path.GetExtension(imageFile.FileName);
-              string filePath = HttpContext.Current.Server.MapPath("~/Uploads/" + imgname);
+              string filePath = HttpContext.Current.Server.MapPath("~/Images/" + imgname);
                 imageFile.SaveAs(filePath);
-               userdetails.user_photo = imgname;
+               userdetails.user_photo = filePath;
             }
 
 
@@ -122,6 +122,21 @@ namespace ProjectDB2022.Controllers
             return "User Registered Successfull";
         }
 
+        [HttpGet]
+        [Route("api/master/userdetails")]
+        public List<sp_fetch_tbluser_details_Result> Showuserdetails()
+        {
+            return _userDetailService.GetUserDetailServices();
+        }
+
+        // change premimum
+        [HttpPost]
+        [Route("api/master/changePremium")]
+        public string Change_Premium(sp_fetch_tbluser_details_Result userdetails)
+        {
+            _userDetailService.ChangePremium(userdetails);
+            return "change premium";
+        }
 
         ///// Api Qualification ///
         [HttpGet]
