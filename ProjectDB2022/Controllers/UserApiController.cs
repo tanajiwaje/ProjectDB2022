@@ -24,6 +24,7 @@ namespace ProjectDB2022.Controllers
             IUserQualificationService _userQualificationService;
             IUserExpertise _ex;
             IUserProfessionalExperinceService _userProfessionalService;
+            
   
    
         public UserApiController( IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
@@ -50,6 +51,11 @@ namespace ProjectDB2022.Controllers
             _userQualificationService = userQualificationService;
             _ex = ex;
             _userProfessionalService = userProfessionalService;
+        }
+
+        public string mymethod()
+        {
+            return "hello";
         }
 
 
