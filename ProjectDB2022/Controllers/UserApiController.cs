@@ -54,20 +54,6 @@ namespace ProjectDB2022.Controllers
         }
 
        
-
-       
-        public void Multiplication()
-        {
-
-        }
-
-
-        public void Division()
-        {
-
-        }
-
-
         //////////  api user details /////////////
         ///
         /*  [HttpPost]

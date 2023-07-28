@@ -39,7 +39,7 @@
         var st = { "user_id": id, "is_permium": premium}
         $.ajax(
             {
-                url: "https://localhost:44319/api/changePremium",
+                url: "https://localhost:44319/api/master/changePremium",
                 method: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(st),
@@ -58,7 +58,7 @@
         var st = { "user_id": id, "is_permium": premium }
         $.ajax(
             {
-                url: "https://localhost:44319/api/changePremium",
+                url: "https://localhost:44319/api/master/changePremium",
                 method: 'post',
                 contentType: 'application/json',
                 data: JSON.stringify(st),
@@ -75,7 +75,7 @@
     function GetAllDetailsActive() {
         $.ajax(
             {
-                url: "https://localhost:44319/api/userdetails",
+                url: "https://localhost:44319/api/master/userdetails",
                 method: 'get',
                 contentType: 'application/json',
                 //data: JSON.stringify(st),

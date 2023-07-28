@@ -53,6 +53,7 @@
             }
             else {
 
+                alert("password correct");
                 $.ajax(
                     {
                         url: "https://localhost:44319/api/Master/location",
@@ -110,9 +111,12 @@
 
 
                         $("#email").append(resp.email_address);
+                        var path = "~/Images/Akshay.jpeg";
                         var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
-                        var profilePictureUrl = "~/Uploads/" + profilePictureName;
-                        $(".img-account-profile").attr("src", profilePictureUrl);
+                       // var profilePictureUrl = "~/Uploads/" + profilePictureName;
+                        $(".img-account-profile").attr("src", path);
+
+                        $(".abc").attr("src", path);
 
 
                         $("#oldpass").val(resp.password);
@@ -947,7 +951,7 @@
                                         <div class="card-header">Profile Picture</div>
                                         <div class="card-body text-center">
                                             <!-- Profile picture image-->
-                                            <img class="img-account-profile rounded-circle mb-2" src="~/Uploads/" height="150" width="150" alt="">
+                                            <img class="img-account-profile rounded-circle mb-2" src="" height="150" width="150" alt="">
                                             <!-- Profile picture help block-->
                                             <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                                             <!-- Profile picture upload button-->
@@ -1064,6 +1068,7 @@
     </div>
 
 
+    <img class="abc" src="" height="150" width="150" />
     <!-- password change modal -->
     <!-- Modal  <div class="modal fade" id="passwordmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
            <div class="modal-dialog" role="document">
