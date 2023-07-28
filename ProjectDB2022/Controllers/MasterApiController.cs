@@ -74,7 +74,9 @@ namespace ProjectDB2022.Controllers
         /// </summary>
         /// <returns></returns>
         /// 
+public void add(){
 
+}
         [HttpPost]
         [Route("api/master/userdetails")]
         public string Adduserdetails()
