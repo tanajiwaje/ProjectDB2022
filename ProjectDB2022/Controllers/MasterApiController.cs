@@ -74,7 +74,7 @@ namespace ProjectDB2022.Controllers
         /// </summary>
         /// <returns></returns>
         /// 
-public void add(){
+        public void add(){
 
 }
         [HttpPost]
