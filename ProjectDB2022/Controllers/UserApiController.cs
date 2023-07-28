@@ -55,7 +55,7 @@ namespace ProjectDB2022.Controllers
 
    public string MynewMethod()
     {
-               return "newmethod";
+               return "newmethodfdssd";
    }
         //////////  api user details /////////////
         ///
