@@ -53,7 +53,7 @@ namespace ProjectDB2022.Controllers
             _userProfessionalService = userProfessionalService;
         }
 
-       
+
         //////////  api user details /////////////
         ///
         /*  [HttpPost]
@@ -79,15 +79,42 @@ namespace ProjectDB2022.Controllers
           }
         */
 
+        [HttpPost]
+        [Route("api/changeprofilepic")]
+        public string Adduserdetails()
+        {
 
+            var form = HttpContext.Current.Request.Form;
+            HttpPostedFile imageFile = HttpContext.Current.Request.Files["user_photo"];
+
+            sp_fetch_tbluser_details_Result userdetails = new sp_fetch_tbluser_details_Result
+            {
+               
+                user_name = form["picname"]
+                
+            };
+            if (imageFile.ContentLength > 0)
+            {
+                string imgname = userdetails.user_name;
+                string filePath = HttpContext.Current.Server.MapPath("~/Images/" + imgname);
+                imageFile.SaveAs(filePath);
+            
+            }
+
+           
+            return "Profile Photo Changed Successfully";
+        }
 
         [HttpPost]
         [Route("api/changepassword")]
-        public string ChangePassword(string password)
+        public string ChangePassword(sp_fetch_tbluser_details_Result user)
         {
             projectDBEntities db = new projectDBEntities();
             //db.sp_fetch_get_code(password);
-            return "change premium";
+            int id = user.user_id;
+            string password = user.password;
+            db.sp_changePassword(id, password);
+            return "Password changed successfully";
         }
 
 

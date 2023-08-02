@@ -167,37 +167,10 @@
         }  */
 
         function AddUser() {
-           /* {
-                var gender = $("#ddgender").val();
-                var location = $("#ddlocation").val();
-                var role = 4;
-
-                var currentDate = new Date();
-                var day = currentDate.getDate();
-                var month = currentDate.getMonth() + 1;
-                var year = currentDate.getFullYear();
-                var jdate = month + '/' + day + '/' + year;
-                var fname = $("#fname").val();
-                var mname = $("#mname").val();
-                var lname = $("#lname").val();
-                var laddress = $("#laddress").val();
-                var bdate = $("#bdate").val();
-                var pic = $("#profile_photo")[0].files[0]; // Get the file data
-                var mobile = $("#mobile").val();
-                var email = $("#email").val();
-                var uname = $("#uname").val();
-                var pass = "";
-                var premium = 0;
-            }*/
-
+      
             var currentDate = new Date();
-
-            // Format the date as per your requirement
             var formattedDate = currentDate.toLocaleDateString();
 
-            
-
-            // Get the selected location value
           
             var gender = $("#ddgender").val();;
             var location = $("#ddlocation").val();
@@ -418,6 +391,10 @@
                     <tr>
                         <td>Password:</td>
                         <td><input type="password" placeholder="password" id="txtpass" class="form-control"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><a href="~/Admin/User/PasswordLink" target="_blank"> Forgot password? </a> </td>
                     </tr>
                     <tr>
                         <td colspan="2"><input type="button" value="Login" id="login" class="btn btn-primary"></td>

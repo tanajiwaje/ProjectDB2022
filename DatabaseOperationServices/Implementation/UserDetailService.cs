@@ -13,9 +13,11 @@ namespace DatabaseOperationServices.Implementaion
    public class UserDetailService:IUserDetailService
     {
         private IRepository<sp_fetch_tbluser_details_Result> usedrepo;
-        public UserDetailService(IRepository<sp_fetch_tbluser_details_Result> usedrepo)
+        private IRepository<sp_check_email_Result> emailrepo;
+        public UserDetailService(IRepository<sp_fetch_tbluser_details_Result> usedrepo,IRepository<sp_check_email_Result> emailrepo)
      {
          this.usedrepo = usedrepo;
+            this.emailrepo = emailrepo;
 
      }
       public void AddUserDetailService(sp_fetch_tbluser_details_Result userdetail)
@@ -90,6 +92,13 @@ namespace DatabaseOperationServices.Implementaion
              object[] parameters = { UserName, Pass };
             return usedrepo.ExecuteQuery(sp_name, parameters).ToList().First();
            // return "change";
+        }
+
+       public sp_check_email_Result Getemail(string email)
+        { 
+            string sp_name = "[sp_check_email] {0}";
+            object[] parameters = { email};
+             return emailrepo.ExecuteQuery(sp_name, parameters).ToList().First();
         }
     }
 }

@@ -17,7 +17,7 @@ using Microsoft.SqlServer.Server;
 using System.Reflection;
 using System.Web.Helpers;
 using System.Xml.Linq;
-
+using System.Diagnostics;
 
 namespace ProjectDB2022.Controllers
 {
@@ -26,7 +26,7 @@ namespace ProjectDB2022.Controllers
 
         
         ExtraBL ebl;
-
+        EncryptedUserId uid;
         ITopicService _opicService;
         ITopicContentService _opicContentService;
         IPostcategorieService _postcategorieService;
@@ -50,6 +50,7 @@ namespace ProjectDB2022.Controllers
         {
 
             ebl = new ExtraBL();
+            uid = new EncryptedUserId();
             _opicService = opicService;
             _opicContentService = opicContentService;
             _postcategorieService = postcategorieService;
@@ -74,7 +75,89 @@ namespace ProjectDB2022.Controllers
         /// </summary>
         /// <returns></returns>
         /// 
-      
+
+
+
+        [HttpPost]
+        [Route("api/master/changeprofilepic")]
+        public string ChangeProfilePicture()
+        {
+            projectDBEntities db = new projectDBEntities();
+
+            var form = HttpContext.Current.Request.Form;
+            HttpPostedFile imageFile = HttpContext.Current.Request.Files["user_photo"];
+
+            sp_fetch_tbluser_details_Result userdetails = new sp_fetch_tbluser_details_Result
+            {
+                first_name = form["first_name"],
+                user_id = int.Parse(form["user_id"])
+              
+            };
+
+            if (imageFile.ContentLength > 0)
+            {
+                string imgname = userdetails.first_name + Path.GetExtension(imageFile.FileName);
+                string filePath = HttpContext.Current.Server.MapPath("~/Images/" + imgname);
+                imageFile.SaveAs(filePath);
+                db.sp_changeProfilePic(userdetails.user_id, imgname);
+                
+            }
+
+            return "Profile Photo Changed Successfully";
+        }
+
+
+        [HttpPost]
+        [Route("api/master/changepassword")]
+        public string ChangePassword(sp_fetch_tbluser_details_Result user)
+        {
+            projectDBEntities db = new projectDBEntities();
+            //db.sp_fetch_get_code(password);
+            int id = user.user_id;
+            string password = user.password;
+            db.sp_changePassword(id, password);
+            return "Password changed successfully";
+        }
+
+
+        [HttpPost]
+        [Route("api/master/checkemail")]
+        public string checkemail(sp_fetch_tbluser_details_Result us)
+        {
+            projectDBEntities db=new projectDBEntities();
+            string email = us.email_address;
+
+
+            var valid = GetemailDetails(email);
+            var user_id = valid.user_id;
+            if (valid != null )
+            {
+                int encryptedUserId = user_id;
+                string msg = "<h2>Dear " + valid.first_name + "</h2>," +
+                           "<p> You are receiving this because we received a password reset request for your account.</p>" +
+                           "<p>  <a href=\"https://localhost:44319/Admin/User/ResetPassword?userid=" + encryptedUserId + "\">Click here to reset your password</a></p>" +
+                           "<p><br/>" +
+                           "<p>If you did not request a password reset, no further action is required. This link will be valid for 10 mins.</p>" +
+                           "<h4>Thanks & Regards</h4><h4></h4>";
+
+
+                string subject = "Password Reset Link";
+                ExtraBL.Send_Email(email, subject, msg);
+                return "We have send password reset link to your email account";
+            }
+            else
+            {
+                return "Invalid Email";
+            }
+
+        }
+
+
+        public sp_check_email_Result GetemailDetails(string email)
+        {
+            return _userDetailService.Getemail(email);
+        }
+
         [HttpPost]
         [Route("api/master/userdetails")]
         public string Adduserdetails()
@@ -100,8 +183,6 @@ namespace ProjectDB2022.Controllers
                 user_name = form["user_name"],
                 is_permium = int.Parse(form["premium"]),
                joining_date = DateTime.Parse(form["Birth_date"])
-               
-
             };
 
            
@@ -110,7 +191,7 @@ namespace ProjectDB2022.Controllers
               string imgname = userdetails.first_name + Path.GetExtension(imageFile.FileName);
               string filePath = HttpContext.Current.Server.MapPath("~/Images/" + imgname);
                 imageFile.SaveAs(filePath);
-               userdetails.user_photo = filePath;
+               userdetails.user_photo = imgname;
             }
 
 

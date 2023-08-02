@@ -13,10 +13,41 @@
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
     <script>
-        $(document).ready(function () {
-
-
+        $(document).ready(function ()
+        {
             GetDetails();
+
+            $("#ImgChange").click(function () {
+                alert("aalo")
+                var token = localStorage.getItem("token");
+                var user_id = $("#user_id").val();
+                var pic = $("#profile_photo")[0].files[0];
+                var First_name = $("#first_name").val();
+                var formData = new FormData();
+                formData.append("user_photo", pic);
+                formData.append("user_id", user_id);
+                formData.append("first_name", First_name);
+
+                $.ajax({
+                    url: "https://localhost:44319/api/master/changeprofilepic", // Update the API endpoint URL
+                    method: "post",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (resp) {
+                        alert(resp);
+                        GetDetails();
+                       
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error occurred: " + error);
+                    }
+                });
+
+
+                
+            })
+
             $("#logout").click(function () {
                 logout();
             })
@@ -26,18 +57,13 @@
 
             $("#btnpassword").click(function () {
                 $("#myModal").modal('hide');
-                $("#passwordmodal").modal('show');
-                
+                $("#passwordmodal").modal('show'); 
             })
 
             $("#btnupdate").click(function () {
                 UpdatePassword();
             })
         })
-
-
-
-
 
         function UpdatePassword()
         {
@@ -46,26 +72,35 @@
 
             if (npass !== cpass) {
                 // Prevent form submission
-                alert("Password mismatched");
+                $("#msg").html("Password mismatched");
+               $("#newpass").val("");
+               ("#confirmpass").val("");
             } else if (npass.length < 8 || !/[A-Z]/.test(npass) || !/\d/.test(npass) || !/[#$!%*?&]/.test(npass)) {
                 // Prevent form submission
                 alert("Password must be at least 8 characters long and contain at least one uppercase letter, one digit, and one special character.");
+                $("#msg").html(""); 
+                $("#newpass").val("");
+                $("#confirmpass").val("");
             }
             else {
+                var token = localStorage.getItem("token");
+                var user_id = $("#user_id").val();
+                alert(user_id);
 
-                alert("password correct");
+                var _jsonpass = { "user_id": user_id, "password": cpass };
+                alert(cpass);
                 $.ajax(
                     {
-                        url: "https://localhost:44319/api/Master/location",
-                        method: 'get',
+                        url:"https://localhost:44319/api/changepassword",
+                        method: 'post',
                         contentType: 'application/json',
-                        //data: JSON.stringify(st),
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'content-type': 'application/json'
+                        },
+                        data: JSON.stringify(_jsonpass),
                         success: function (resp) {
-                            $.each(resp, function (i, d) {
-                                // $("#ddstate").append("<option " + d.state_id + ">" + d.state_name + "</option>")
-                                $("#ddlocation").append("<option value='" + d.location_id + "'>" + d.location_name + "</option>");
-
-                            })
+                            alert(resp);
                         }
                     })
 
@@ -92,11 +127,10 @@
                     },
                     success: function (resp) {
                         console.log(resp);
-
+                        $("#user_id").val(resp.user_id);
                         $(".first_name").append(resp.first_name);
                         $("#first_name").val(resp.first_name);
                         $(".last_name").val(resp.last_name);
-
                         $("#lastname").val(resp.last_name);
                         var birthDate = new Date(resp.birth_date);
                         var options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -111,8 +145,10 @@
 
 
                         $("#email").append(resp.email_address);
-                        var path = "~/Images/Akshay.jpeg";
-                        var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
+                        var profilePictureName = resp.user_photo;
+                        $("#userpic").val(profilePictureName);
+                        var path = "/Images/" + profilePictureName;
+                       // var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
                        // var profilePictureUrl = "~/Uploads/" + profilePictureName;
                         $(".img-account-profile").attr("src", path);
 
@@ -955,7 +991,12 @@
                                             <!-- Profile picture help block-->
                                             <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
                                             <!-- Profile picture upload button-->
-                                            <button class="btn btn-primary" type="button">Upload new image</button>
+                                            <button class="btn btn-primary" type="button" id="ImgChange">Upload new image</button>
+
+                                           
+                                            <input type="text" id="userpic"  hidden />
+                                            <input type="file" name="user_photo" class="form-control" id="profile_photo">
+
                                             <!-- Button trigger modal -->
                                             <button type="button" class="btn btn-success" data-toggle="modal" id="btnpassword" data-target="#exampleModal">
                                                 Change Password
@@ -980,6 +1021,7 @@
                                                     <!-- Form Group (first name)-->
                                                     <div class="col-md-6">
                                                         <label class="small mb-1" for="inputFirstName">First name</label>
+                                                        
                                                         <input class="form-control" id="first_name" type="text" placeholder="Enter your first name" value="Valerie">
                                                     </div>
                                                     <!-- Form Group (last name)-->
@@ -1049,14 +1091,21 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body bg-light">
-                    <label>Old Password</label>
-                    <input type="text" value="" id="oldpass" disabled class="form-control" /><br />
+
+                  
+                    <input type="text" value="" id="user_id"  class="form-control" hidden /><br />
+
+                    <label hidden >Old Password</label>
+                    <input type="text" value="" id="oldpass" disabled class="form-control" hidden /><br />
 
                     <label>New Password</label>
                     <input type="text" value="" id="newpass" placeholder="Enter new password" class="form-control" /><br />
 
                     <label>Confirm Password</label>
                     <input type="password" value="" id="confirmpass" placeholder="Confirm password" class="form-control" /><br />
+                    <pre style="font-size:0.6rem">*Password must be at least 8 characters long should contain <br />at least one uppercase letter, one digit, and one special character.</pre>
+
+                    <pre style="color:red" id="msg"></pre>
 
                 </div>
                 <div class="modal-footer">
@@ -1068,7 +1117,7 @@
     </div>
 
 
-    <img class="abc" src="" height="150" width="150" />
+   
     <!-- password change modal -->
     <!-- Modal  <div class="modal fade" id="passwordmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
            <div class="modal-dialog" role="document">

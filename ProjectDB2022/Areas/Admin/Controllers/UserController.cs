@@ -54,6 +54,19 @@ namespace ProjectDB2022.Areas.Admin.Controllers
             return View();
         }
 
+        public ActionResult PasswordLink()
+        {
+            return View();
+        }
+
+
+        public ActionResult ResetPassword(string userId)
+        {
+            ViewBag.UserId = userId;
+            return View();
+        }
+
+
         public ActionResult DashboardFirst()
         {
           

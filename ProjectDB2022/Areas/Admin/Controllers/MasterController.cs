@@ -16,12 +16,7 @@ namespace ProjectDB2022.Areas.Admin.Controllers
             return View();
         }
 
-        public ActionResult Topic()
-        {
-            return View();
-        }
-
-
+    
         public ActionResult TopicContent()
         {
             return View();
