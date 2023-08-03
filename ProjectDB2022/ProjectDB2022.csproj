@@ -273,6 +273,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\Index.css" />
     <Content Include="Content\Mycss.css" />
+    <Content Include="Content\NileshPost.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Areas\Admin\Views\web.config" />
@@ -358,6 +359,7 @@
     <Folder Include="Areas\User\Controllers\" />
     <Folder Include="Areas\User\Data\" />
     <Folder Include="Areas\User\Views\Shared\" />
+    <Folder Include="icons\" />
     <Folder Include="Images\" />
     <Folder Include="Uploads\" />
     <Folder Include="Views\TokenGenerateApi\" />

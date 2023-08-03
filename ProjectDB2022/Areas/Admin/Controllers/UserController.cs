@@ -62,7 +62,9 @@ namespace ProjectDB2022.Areas.Admin.Controllers
 
         public ActionResult ResetPassword(string userId)
         {
-            ViewBag.UserId = userId;
+            string uid =EncryptedUserId.Decrypt1(userId);
+            int userid = int.Parse(uid);
+            ViewBag.UserId = userid;
             return View();
         }
 

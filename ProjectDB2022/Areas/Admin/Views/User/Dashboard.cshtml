@@ -12,41 +12,28 @@
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/NileshPost.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <script>
-        $(document).ready(function ()
-        {
+        var getFile = null;
+        $(document).ready(function () {
+
             GetDetails();
 
-            $("#ImgChange").click(function () {
-                alert("aalo")
-                var token = localStorage.getItem("token");
-                var user_id = $("#user_id").val();
-                var pic = $("#profile_photo")[0].files[0];
-                var First_name = $("#first_name").val();
-                var formData = new FormData();
-                formData.append("user_photo", pic);
-                formData.append("user_id", user_id);
-                formData.append("first_name", First_name);
-
-                $.ajax({
-                    url: "https://localhost:44319/api/master/changeprofilepic", // Update the API endpoint URL
-                    method: "post",
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (resp) {
-                        alert(resp);
-                        GetDetails();
-                       
-                    },
-                    error: function (xhr, status, error) {
-                        alert("Error occurred: " + error);
-                    }
-                });
-
-
-                
+            $("#btnpost").click(function () {
+                FeedPost();
             })
+
+
+            $("#photo").click(function () {
+                UploadPost();
+            })
+
+            $("#ImgChange").click(function () {
+                ChangeProfilePic();
+            })
+
+
 
             $("#logout").click(function () {
                 logout();
@@ -57,7 +44,7 @@
 
             $("#btnpassword").click(function () {
                 $("#myModal").modal('hide');
-                $("#passwordmodal").modal('show'); 
+                $("#passwordmodal").modal('show');
             })
 
             $("#btnupdate").click(function () {
@@ -65,20 +52,93 @@
             })
         })
 
-        function UpdatePassword()
-        {
+
+        function FeedPost() {
+
+            var postimg = $("#file-input")[0].files[0];
+            var txtdesc = $("#txtpost").val();
+            var user_id = $("#user_id").val();
+            var post_title = "PostTitle";
+            var is_active = 0;
+            var currentDate = new Date();
+            var formattedDate = currentDate.toISOString().slice(0, 10);
+            
+
+            var formData = new FormData();
+            formData.append("user_id", user_id);
+            formData.append("post_date", formattedDate);
+            formData.append("post_title", post_title);
+            formData.append("post_description", txtdesc);
+            formData.append("photo", postimg);
+            formData.append("is_active", is_active);
+
+            console.log(formData);
+
+            $.ajax({
+                url: "https://localhost:44319/api/master/userposts", // Update the API endpoint URL
+                method: "post",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (resp) {
+                    alert(resp);
+                    console.log(resp);
+                   // GetDetails();
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Error occurred: " + error);
+                }
+            });
+
+        }
+
+        function UploadPost() {
+
+            $("#UploadPost").modal('show');
+           
+        }
+
+        function ChangeProfilePic() {
+            var token = localStorage.getItem("token");
+            var user_id = $("#user_id").val();
+            var pic = $("#profile_photo")[0].files[0];
+            var First_name = $("#first_name").val();
+            var formData = new FormData();
+            formData.append("user_photo", pic);
+            formData.append("user_id", user_id);
+            formData.append("first_name", First_name);
+
+            $.ajax({
+                url: "https://localhost:44319/api/master/changeprofilepic", // Update the API endpoint URL
+                method: "post",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (resp) {
+                    alert(resp);
+                    GetDetails();
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Error occurred: " + error);
+                }
+            });
+        }
+
+        function UpdatePassword() {
             var npass = $("#newpass").val();
             var cpass = $("#confirmpass").val();
 
             if (npass !== cpass) {
                 // Prevent form submission
                 $("#msg").html("Password mismatched");
-               $("#newpass").val("");
-               ("#confirmpass").val("");
+                $("#newpass").val("");
+                ("#confirmpass").val("");
             } else if (npass.length < 8 || !/[A-Z]/.test(npass) || !/\d/.test(npass) || !/[#$!%*?&]/.test(npass)) {
                 // Prevent form submission
                 alert("Password must be at least 8 characters long and contain at least one uppercase letter, one digit, and one special character.");
-                $("#msg").html(""); 
+                $("#msg").html("");
                 $("#newpass").val("");
                 $("#confirmpass").val("");
             }
@@ -91,7 +151,7 @@
                 alert(cpass);
                 $.ajax(
                     {
-                        url:"https://localhost:44319/api/changepassword",
+                        url: "https://localhost:44319/api/changepassword",
                         method: 'post',
                         contentType: 'application/json',
                         headers: {
@@ -148,8 +208,8 @@
                         var profilePictureName = resp.user_photo;
                         $("#userpic").val(profilePictureName);
                         var path = "/Images/" + profilePictureName;
-                       // var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
-                       // var profilePictureUrl = "~/Uploads/" + profilePictureName;
+                        // var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
+                        // var profilePictureUrl = "~/Uploads/" + profilePictureName;
                         $(".img-account-profile").attr("src", path);
 
                         $(".abc").attr("src", path);
@@ -160,6 +220,20 @@
 
                 })
         }
+    </script>
+
+    <script>
+        const container = document.querySelector(".container"),
+            privacy = container.querySelector(".post .privacy"),
+            arrowBack = container.querySelector(".audience .arrow-back");
+
+        privacy.addEventListener("click", () => {
+            container.classList.add("active");
+        });
+
+        arrowBack.addEventListener("click", () => {
+            container.classList.remove("active");
+        });
     </script>
     <style>
         * {
@@ -216,7 +290,6 @@
             padding-bottom: 10px;
             width: 100%;
             background-color: white;
-           
         }
 
         .header__left {
@@ -234,7 +307,6 @@
             width: 50px;
             display: none;
             border: 1px solid red;
-
         }
 
         .header__search {
@@ -285,7 +357,6 @@
             max-width: 1200px;
             margin-left: 20px;
             margin-right: 20px;
-
         }
         /* Sidebar */
         .sidebar {
@@ -402,7 +473,6 @@
             flex: 0.6;
             margin: 0 20px;
             max-width: 800px;
-
         }
 
         .feed__inputContainer {
@@ -412,7 +482,6 @@
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
-           
         }
 
         .feed__input {
@@ -422,7 +491,6 @@
             padding: 10px;
             color: gray;
             padding-left: 15px;
-
         }
 
             .feed__input > form {
@@ -445,7 +513,6 @@
         .feed__inputOptions {
             display: flex;
             justify-content: space-evenly;
-            
         }
 
         .inputOption {
@@ -455,7 +522,6 @@
             color: gray;
             padding: 10px;
             cursor: pointer;
-
         }
 
             .inputOption:hover {
@@ -465,7 +531,7 @@
 
             .inputOption > h4 {
                 margin-left: 5px;
-                font-size:20px;
+                font-size: 20px;
             }
 
         /* Post */
@@ -586,7 +652,8 @@
                 <h3>Notifications</h3>
             </div>
             <div class="headerOption">
-                <i class="material-icons headerOption__icon" id="profile"> account_circle </i>
+                <!-- <i class="material-icons headerOption__icon" id="profile"> account_circle </i> -->
+                <img src="" class="img-account-profile img-account-profile rounded-5" id="profile" alt="logo" width="40" height="40">
                 <h3 class="first_name"></h3>
             </div>
             <div class="headerOption" id="logout">
@@ -602,7 +669,9 @@
         <div class="sidebar">
             <div class="sidebar__top">
                 <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MXwxMjA3fDB8MXxhbGx8fHx8fHx8fA&ixlib=rb-1.2.1&q=80&w=1080" alt="" />
-                <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                @*<i class="material-icons sidebar__topAvatar"> account_circle </i>*@
+                <img src="" class="img-account-profile img-account-profile rounded-5 material-icons sidebar__topAvatar" id="profile" alt="logo" width="10" height="40" style="width:70px;height:70px;">
+                &nbsp;
                 <h2> <span class="first_name"></span>  </h2>
                 <h4 id="email"></h4>
             </div>
@@ -655,7 +724,7 @@
                 </div>
 
                 <div class="feed__inputOptions">
-                    <div class="inputOption">
+                    <div class="inputOption" id="photo">
                         <i style="color: #70b5f9" class="material-icons"> insert_photo </i>
                         <h4>Photo</h4>
                     </div>
@@ -954,16 +1023,17 @@
             </div>
         </div>
 
-
-
-
-
-
         <!-- Widgets Ends -->
     </div>
-    <!-- Main Body Ends -->
-    <!--  this modal-->
 
+
+    <!-- Main Body Ends -->
+
+
+
+
+
+    <!--  Profile -->
     <div class="m-4">
         <div id="myModal" class="modal fade" tabindex="-1">
             <div class="modal-dialog modal-xl">
@@ -993,9 +1063,9 @@
                                             <!-- Profile picture upload button-->
                                             <button class="btn btn-primary" type="button" id="ImgChange">Upload new image</button>
 
-                                           
-                                            <input type="text" id="userpic"  hidden />
-                                            <input type="file" name="user_photo" class="form-control" id="profile_photo">
+
+                                            <input type="text" id="userpic" hidden />
+                                            <input type="file" name="user_photo" class="form-control" id="profile_photo" style="margin-top: 8px; margin-bottom: 8px;">
 
                                             <!-- Button trigger modal -->
                                             <button type="button" class="btn btn-success" data-toggle="modal" id="btnpassword" data-target="#exampleModal">
@@ -1004,6 +1074,7 @@
                                         </div>
                                     </div>
                                 </div>
+                               
 
                                 <div class="col-xl-8">
                                     <!-- Account details card-->
@@ -1021,7 +1092,7 @@
                                                     <!-- Form Group (first name)-->
                                                     <div class="col-md-6">
                                                         <label class="small mb-1" for="inputFirstName">First name</label>
-                                                        
+
                                                         <input class="form-control" id="first_name" type="text" placeholder="Enter your first name" value="Valerie">
                                                     </div>
                                                     <!-- Form Group (last name)-->
@@ -1082,7 +1153,7 @@
 
 
 
-
+    <!-- password change modal inside dashboard   -->
     <div id="passwordmodal" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">
@@ -1092,10 +1163,10 @@
                 </div>
                 <div class="modal-body bg-light">
 
-                  
-                    <input type="text" value="" id="user_id"  class="form-control" hidden /><br />
 
-                    <label hidden >Old Password</label>
+                    <input type="text" value="" id="user_id" class="form-control" hidden /><br />
+
+                    <label hidden>Old Password</label>
                     <input type="text" value="" id="oldpass" disabled class="form-control" hidden /><br />
 
                     <label>New Password</label>
@@ -1116,8 +1187,131 @@
         </div>
     </div>
 
+    <!-- upload post  -->
+    <div id="UploadPost" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
 
-   
+                    <div class="container">
+                        <div class="wrapper">
+                            <section class="post">
+                                <header>Create Post</header>
+                                <form action="#">
+                                    <div class="content">
+                                        <img src="" class="img-account-profile img-account-profile rounded-5" alt="logo">
+                                        <div class="details">
+                                            <p> <span class="first_name"></span> </p>
+                                            <div class="privacy">
+                                                <i class="fas fa-user-friends"></i>
+                                                <span>Friends</span>
+                                                <i class="fas fa-caret-down"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <textarea placeholder="What's on your mind ?" spellcheck="false" id="txtpost" ></textarea>
+                                    <div class="theme-emoji">
+                                        <img src="~/icons/theme.svg" alt="theme">
+                                        <img src="~/icons/smile.svg" alt="smile">
+                                    </div>
+                                    @*<div class="options">
+                                        <p>Add to Your Post</p>
+                                        <ul class="list">
+                                            <li><img src="~/icons/gallery.svg" class="file-icon" data-file-type="image" alt="gallery"></li>
+                                            <li><img src="~/icons/tag.svg" alt="gallery"></li>
+                                            <li><img src="~/icons/emoji.svg" alt="gallery"></li>
+                                            <li><img src="~/icons/mic.svg" alt="gallery"></li>
+                                            <li><img src="~/icons/more.svg" alt="gallery"></li>
+                                        </ul>
+                                    </div>*@
+                                    <div class="options">
+                                        <input type="file" id="file-input" >
+                                    </div>
+                                    
+                                    <button id="btnpost">Post</button> 
+                                   
+                                </form>
+                            </section>
+                            <section class="audience">
+                                <header>
+                                    <div class="arrow-back"><i class="fas fa-arrow-left"></i></div>
+                                    <p>Select Audience</p>
+                                </header>
+                                <div class="content">
+                                    <p>Who can see your post?</p>
+                                    <span>Your post will show up in News Feed, on your profile and in search results.</span>
+                                </div>
+                                <ul class="list">
+                                    <li>
+                                        <div class="column">
+                                            <div class="icon"><i class="fas fa-globe-asia"></i></div>
+                                            <div class="details">
+                                                <p>Public</p>
+                                                <span>Anyone on or off Facebook</span>
+                                            </div>
+                                        </div>
+                                        <div class="radio"></div>
+                                    </li>
+                                    <li class="active">
+                                        <div class="column">
+                                            <div class="icon"><i class="fas fa-user-friends"></i></div>
+                                            <div class="details">
+                                                <p>Friends</p>
+                                                <span>Your friends on Facebook</span>
+                                            </div>
+                                        </div>
+                                        <div class="radio"></div>
+                                    </li>
+                                    <li>
+                                        <div class="column">
+                                            <div class="icon"><i class="fas fa-user"></i></div>
+                                            <div class="details">
+                                                <p>Specific</p>
+                                                <span>Only show to some friends</span>
+                                            </div>
+                                        </div>
+                                        <div class="radio"></div>
+                                    </li>
+                                    <li>
+                                        <div class="column">
+                                            <div class="icon"><i class="fas fa-lock"></i></div>
+                                            <div class="details">
+                                                <p>Only me</p>
+                                                <span>Only you can see your post</span>
+                                            </div>
+                                        </div>
+                                        <div class="radio"></div>
+                                    </li>
+                                    <li>
+                                        <div class="column">
+                                            <div class="icon"><i class="fas fa-cog"></i></div>
+                                            <div class="details">
+                                                <p>Custom</p>
+                                                <span>Include and exclude friends</span>
+                                            </div>
+                                        </div>
+                                        <div class="radio"></div>
+                                    </li>
+                                </ul>
+                            </section>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <!-- password change modal -->
     <!-- Modal  <div class="modal fade" id="passwordmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
            <div class="modal-dialog" role="document">

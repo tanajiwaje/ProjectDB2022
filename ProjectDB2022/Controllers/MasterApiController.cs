@@ -23,10 +23,8 @@ namespace ProjectDB2022.Controllers
 {
     public class MasterApiController : ApiController
     {
-
-        
         ExtraBL ebl;
-        EncryptedUserId uid;
+        EncryptedUserId enc;
         ITopicService _opicService;
         ITopicContentService _opicContentService;
         IPostcategorieService _postcategorieService;
@@ -50,7 +48,7 @@ namespace ProjectDB2022.Controllers
         {
 
             ebl = new ExtraBL();
-            uid = new EncryptedUserId();
+            enc = new EncryptedUserId();
             _opicService = opicService;
             _opicContentService = opicContentService;
             _postcategorieService = postcategorieService;
@@ -76,6 +74,29 @@ namespace ProjectDB2022.Controllers
         /// <returns></returns>
         /// 
 
+
+        ///user posts 
+
+        [HttpPost]
+        [Route("api/master/userposts")]
+        public string GetUserPosts()
+        {
+            var form = HttpContext.Current.Request.Form;
+            HttpPostedFile imageFile = HttpContext.Current.Request.Files["photo"];
+
+            sp_fetch_tbluser_posts_Result obj = new sp_fetch_tbluser_posts_Result
+            {
+                user_id = int.Parse(form["user_id"]),
+                post_date = DateTime.Parse(form["post_date"]),
+                post_title = form["post_title"],
+                post_description = form["post_description"],
+                is_active = int.Parse(form["is_active"])
+            };
+
+
+
+            return "Post Uploaded Successfully";
+        }
 
 
         [HttpPost]
@@ -113,6 +134,7 @@ namespace ProjectDB2022.Controllers
         {
             projectDBEntities db = new projectDBEntities();
             //db.sp_fetch_get_code(password);
+            
             int id = user.user_id;
             string password = user.password;
             db.sp_changePassword(id, password);
@@ -129,10 +151,13 @@ namespace ProjectDB2022.Controllers
 
 
             var valid = GetemailDetails(email);
-            var user_id = valid.user_id;
+            string user_id =valid.user_id.ToString();
+           
             if (valid != null )
             {
-                int encryptedUserId = user_id;
+               
+                string encryptedUserId =EncryptedUserId.Encrypt1(user_id);
+          
                 string msg = "<h2>Dear " + valid.first_name + "</h2>," +
                            "<p> You are receiving this because we received a password reset request for your account.</p>" +
                            "<p>  <a href=\"https://localhost:44319/Admin/User/ResetPassword?userid=" + encryptedUserId + "\">Click here to reset your password</a></p>" +

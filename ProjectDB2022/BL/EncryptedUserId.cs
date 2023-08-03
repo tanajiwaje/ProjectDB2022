@@ -1,11 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Security.Cryptography;
+//using System.Text;
+//using System.Web;
+
+using System;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 
 namespace ProjectDB2022.BL
+{
+    /*
 {
     public class EncryptedUserId
     {
@@ -100,5 +106,40 @@ namespace ProjectDB2022.BL
         }
     }
 
+  }
 }
+
+*/
+
+    public class EncryptedUserId
+    {
+
+        public static string Encrypt1(string input)
+        {
+            string key = "@dse-dff*&-plgh$";
+            byte[] inputArray = UTF8Encoding.UTF8.GetBytes(input);
+            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
+            tripleDES.Key = UTF8Encoding.UTF8.GetBytes(key);
+            tripleDES.Mode = CipherMode.ECB;
+            tripleDES.Padding = PaddingMode.PKCS7;
+            ICryptoTransform cTransform = tripleDES.CreateEncryptor();
+            byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+            tripleDES.Clear();
+            return Convert.ToBase64String(resultArray, 0, resultArray.Length);
+        }
+        public static string Decrypt1(string input)
+        {
+            string key = "@dse-dff*&-plgh$";
+            byte[] inputArray = Convert.FromBase64String(input);
+            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
+            tripleDES.Key = UTF8Encoding.UTF8.GetBytes(key);
+            tripleDES.Mode = CipherMode.ECB;
+            tripleDES.Padding = PaddingMode.PKCS7;
+            ICryptoTransform cTransform = tripleDES.CreateDecryptor();
+            byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
+            tripleDES.Clear();
+            return UTF8Encoding.UTF8.GetString(resultArray);
+        }
+
+    }
 }
