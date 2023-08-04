@@ -32,10 +32,29 @@
                         })
                 }
             })
+
+
+        $.ajax(
+            {
+                url: "https://localhost:44319/api/master/getposts",
+                method: 'get',
+                contentType: 'application/json',
+                //data: JSON.stringify(st),
+                success: function (resp) {
+
+                    $.each(resp, function (i, d) {
+                      ///  var birthDate = new Date(d.birth_date); var b = birthDate.toISOString().split("T")[0];
+                        //var JoinDate = new Date(d.joining_date); var j = JoinDate.toISOString().split("T")[0];
+
+                        $("#feed").append("<tr><td>" + (i + 1) + "</td> <td>" + d.user_id + "</td><td> " + d.post_date + "</td><td>" + d.post_description + "</td><td>" + d.photo + "</td><td></td > <td>  <button class='btn btn-primary' onclick='Active(" + d.user_id + ",\"" + d.is_permium + "\")'>Active</button>  <button  class='btn btn-danger' onclick='inactive(" + d + ",\"" + d + "\")'>inactive</button> </td> </tr>")
+                        
+                    })
+                }
+            })
     }
 
     function Active(id, premium) {
-        alert("hello")
+     
         var st = { "user_id": id, "is_permium": premium}
         $.ajax(
             {
@@ -149,4 +168,20 @@
     </table>
 </div>
 
+<div style="border:1px solid red;overflow:scroll;height:120px;width:100%;">
+    <table class="" border="1">
+        <thead>
+            <tr>
+                <td>Sr no</td>
+                <td>user_id</td>
+                <td>post date</td>
+                <td>post description</td>
+                <td>Photo</td>
 
+            </tr>
+        </thead>
+        <tbody id="feed">
+
+        </tbody>
+    </table>
+</div>

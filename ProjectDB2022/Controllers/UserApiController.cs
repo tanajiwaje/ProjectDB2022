@@ -79,6 +79,30 @@ namespace ProjectDB2022.Controllers
           }
         */
 
+
+
+
+        [HttpPost]
+        [Route("api/userposts")]
+        public string GetUserPosts()
+        {
+            var form = HttpContext.Current.Request.Form;
+            HttpPostedFile imageFile = HttpContext.Current.Request.Files["photo"];
+
+            sp_fetch_tbluser_posts_Result obj = new sp_fetch_tbluser_posts_Result
+            {
+                user_id = int.Parse(form["user_id"]),
+                post_date = DateTime.Parse(form["post_date"]),
+                post_title = form["post_title"],
+                post_description = form["post_description"],
+                is_active = int.Parse(form["is_active"])
+            };
+
+
+
+            return "Post Uploaded Successfully";
+        }
+
         [HttpPost]
         [Route("api/changeprofilepic")]
         public string Adduserdetails()

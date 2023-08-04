@@ -44,11 +44,13 @@ namespace ProjectDB2022.Controllers
         // IUserExpertise _ex;
 
         IUserProfessionalExperinceService _userProfessionalService;
-        public MasterApiController(ITopicService opicService, ITopicContentService opicContentService, IPostcategorieService postcategorieService, IStateService stateService, ICityService cityService, ILocationService locationService, IQualificationService qualificationService, ISpecilizationService specilizationService, IRoleService roleService, IGenderService genderService, IDesignationService designationService, IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
-        {
+        IUserposts _userpost;
+        public MasterApiController(IUserposts userpost,ITopicService opicService, ITopicContentService opicContentService, IPostcategorieService postcategorieService, IStateService stateService, ICityService cityService, ILocationService locationService, IQualificationService qualificationService, ISpecilizationService specilizationService, IRoleService roleService, IGenderService genderService, IDesignationService designationService, IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
+        {   
 
             ebl = new ExtraBL();
             enc = new EncryptedUserId();
+            _userpost = userpost;
             _opicService = opicService;
             _opicContentService = opicContentService;
             _postcategorieService = postcategorieService;
@@ -84,6 +86,8 @@ namespace ProjectDB2022.Controllers
             var form = HttpContext.Current.Request.Form;
             HttpPostedFile imageFile = HttpContext.Current.Request.Files["photo"];
 
+            string fname = form["first_name"];
+
             sp_fetch_tbluser_posts_Result obj = new sp_fetch_tbluser_posts_Result
             {
                 user_id = int.Parse(form["user_id"]),
@@ -93,11 +97,36 @@ namespace ProjectDB2022.Controllers
                 is_active = int.Parse(form["is_active"])
             };
 
+            string FolderPath= HttpContext.Current.Server.MapPath("~/UserPosts/"+fname+obj.user_id);
+            if (!Directory.Exists(FolderPath))
+            {
+                Directory.CreateDirectory(FolderPath);  
+            }
 
+           
+            string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+            string[] files = Directory.GetFiles(FolderPath);
+
+            int imageCount = files.Count(file => allowedExtensions.Contains(Path.GetExtension(file).ToLower()));
+
+            string imgname=fname+(imageCount+1)+Path.GetExtension(imageFile.FileName);
+            string filepath = FolderPath +"/"+ imgname;
+            imageFile.SaveAs(filepath);
+
+           obj.photo = imgname;
+
+              _userpost.AddPosts(obj);
 
             return "Post Uploaded Successfully";
         }
 
+
+        [HttpGet]
+        [Route("api/master/getposts")]
+        public List<sp_fetch_tbluser_posts_Result> GetPosts()
+        {
+            return _userpost.GetPosts();
+        }
 
         [HttpPost]
         [Route("api/master/changeprofilepic")]

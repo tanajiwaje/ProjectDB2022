@@ -362,6 +362,7 @@
     <Folder Include="icons\" />
     <Folder Include="Images\" />
     <Folder Include="Uploads\" />
+    <Folder Include="UserPosts\" />
     <Folder Include="Views\TokenGenerateApi\" />
   </ItemGroup>
   <ItemGroup>

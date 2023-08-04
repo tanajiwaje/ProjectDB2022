@@ -4,6 +4,7 @@ using Unity.WebApi;
 using ProjectDatabaseOperation;
 using DatabaseOperationServices.Implementaion;
 using DatabaseOperationServices.Interface;
+using DatabaseOperationServices.Implementation;
 
 namespace ProjectDB2022
 {
@@ -30,7 +31,8 @@ namespace ProjectDB2022
             container.RegisterType<IUserExpertise, UserExpertise>();
             container.RegisterType<IUserProfessionalExperinceService,UserProfessionalExperinceService>();
             container.RegisterType<IStateService, StateService>();
-          
+            container.RegisterType<IUserposts, UserPost>();
+
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);
         }

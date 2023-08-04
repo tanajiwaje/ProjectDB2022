@@ -58,6 +58,7 @@
             var postimg = $("#file-input")[0].files[0];
             var txtdesc = $("#txtpost").val();
             var user_id = $("#user_id").val();
+            var First_name = $("#first_name").val();
             var post_title = "PostTitle";
             var is_active = 0;
             var currentDate = new Date();
@@ -71,6 +72,8 @@
             formData.append("post_description", txtdesc);
             formData.append("photo", postimg);
             formData.append("is_active", is_active);
+            formData.append("first_name", First_name);
+
 
             console.log(formData);
 
@@ -124,6 +127,9 @@
                     alert("Error occurred: " + error);
                 }
             });
+
+
+
         }
 
         function UpdatePassword() {
@@ -222,19 +228,7 @@
         }
     </script>
 
-    <script>
-        const container = document.querySelector(".container"),
-            privacy = container.querySelector(".post .privacy"),
-            arrowBack = container.querySelector(".audience .arrow-back");
-
-        privacy.addEventListener("click", () => {
-            container.classList.add("active");
-        });
-
-        arrowBack.addEventListener("click", () => {
-            container.classList.remove("active");
-        });
-    </script>
+    
     <style>
         * {
             margin: 0;
