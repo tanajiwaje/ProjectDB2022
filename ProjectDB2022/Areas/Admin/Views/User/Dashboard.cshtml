@@ -19,6 +19,7 @@
         $(document).ready(function () {
 
             GetDetails();
+            GetAllPost();
 
             $("#btnpost").click(function () {
                 FeedPost();
@@ -52,6 +53,79 @@
             })
         })
 
+        function GetAllPost() {
+            
+            $.ajax({
+                url: "https://localhost:44319/api/master/getposts", // Update the API endpoint URL
+                method: "get",
+                contentType: 'application/json',
+                success: function (resp) {
+                  
+                    console.log(resp);
+                    var userid = $("#user_id").val();
+                    alert(userid);
+                    $.each(resp, function (i, d) {
+
+                        
+
+                        if (userid == d.user_id) {
+
+                        }
+                        else {
+
+                            var fullName = d.first_name + ' ' + d.last_name;
+                            var folderimage = d.first_name + d.user_id;
+                            var postHtml = `
+        <div class="post__header">
+            <i class="material-icons sidebar__topAvatar"> account_circle </i>
+            <div class="post__info">
+                <h2>${fullName}</h2>
+                <p>Job Description</p>
+            </div>
+        </div>
+    
+        <div class="post__body">
+            <p>Message here</p>
+            <img height="100" width="100" src="/UserPosts/${folderimage}/${d.photo}"
+                 class="" alt="">
+        </div>
+    
+        <div class="feed__inputOptions">
+            <div class="inputOption">
+                <i style="color: gray" class="material-icons"> thumb_up </i>
+                <h4>Like</h4>
+            </div>
+            <div class="inputOption">
+                <i style="color: gray" class="material-icons"> comment </i>
+                <h4>Comment</h4>
+            </div>
+            <div class="inputOption">
+                <i style="color: gray" class="material-icons"> share </i>
+                <h4>Share</h4>
+            </div>
+            <div class="inputOption">
+                <i style="color: gray" class="material-icons"> send </i>
+                <h4>Send</h4>
+            </div>
+        </div>
+        <div class="postseperation">
+         <hr/>
+        </div>
+    `;
+
+
+                            $("#userposts").append(postHtml);
+                        }
+                    })
+
+                   
+
+                },
+                error: function (xhr, status, error) {
+                    alert("Error occurred: " + error);
+                }
+            });
+        }
 
         function FeedPost() {
 
@@ -540,6 +614,7 @@
         .post__header {
             display: flex;
             margin-bottom: 10px;
+            margin-top:10px;
         }
 
         .post__info {
@@ -707,7 +782,7 @@
         </div>
         <!-- Sidebar Ends -->
         <!-- Feed Starts -->
-        <div class="feed">
+        <div class="feed" >
             <div class="feed__inputContainer">
                 <div class="feed__input">
                     <i class="material-icons"> create </i>
@@ -738,43 +813,12 @@
             </div>
 
             <!-- Post Starts -->
-            <div class="post">
-                <div class="post__header">
-                    <i class="material-icons sidebar__topAvatar"> account_circle </i>
-                    <div class="post__info">
-                        <h2>Somanath Goudar</h2>
-                        <p>Job Description</p>
-                    </div>
-                </div>
-
-                <div class="post__body">
-                    <p>Message here</p>
-                    <img height="100" width="100" src="~/Areas/Admin/Images/pic3.jpg"
-                         class="" alt="">
-                </div>
-
-                <div class="feed__inputOptions">
-                    <div class="inputOption">
-                        <i style="color: gray" class="material-icons"> thumb_up </i>
-                        <h4>Like</h4>
-                    </div>
-                    <div class="inputOption">
-                        <i style="color: gray" class="material-icons"> comment </i>
-                        <h4>Comment</h4>
-                    </div>
-                    <div class="inputOption">
-                        <i style="color: gray" class="material-icons"> share </i>
-                        <h4>Share</h4>
-                    </div>
-                    <div class="inputOption">
-                        <i style="color: gray" class="material-icons"> send </i>
-                        <h4>Send</h4>
-                    </div>
-                </div>
+            <div class="post" id="userposts">
+               
             </div>
             <!-- Post Ends -->
             <!-- Post Starts -->
-            <div class="post">
+            <div class="post" hidden>
                 <div class="post__header">
                     <i class="material-icons sidebar__topAvatar"> account_circle </i>
                     <div class="post__info">
@@ -808,7 +852,7 @@
             </div>
             <!-- Post Ends -->
             <!-- Post Starts -->
-            <div class="post">
+            <div class="post" hidden>
                 <div class="post__header">
                     <i class="material-icons sidebar__topAvatar"> account_circle </i>
                     <div class="post__info">
@@ -843,7 +887,7 @@
             </div>
             <!-- Post Ends -->
             <!-- Post Starts -->
-            <div class="post">
+            <div class="post" hidden>
                 <div class="post__header">
                     <i class="material-icons sidebar__topAvatar"> account_circle </i>
                     <div class="post__info">
@@ -877,7 +921,7 @@
             </div>
             <!-- Post Ends -->
             <!-- Post Starts -->
-            <div class="post">
+            <div class="post" hidden>
                 <div class="post__header">
                     <i class="material-icons sidebar__topAvatar"> account_circle </i>
                     <div class="post__info">
@@ -911,7 +955,7 @@
             </div>
             <!-- Post Ends -->
             <!-- Post Starts -->
-            <div class="post">
+            <div class="post" hidden>
                 <div class="post__header">
                     <i class="material-icons sidebar__topAvatar"> account_circle </i>
                     <div class="post__info">
@@ -945,7 +989,7 @@
             </div>
             <!-- Post Ends -->
             <!-- Post Starts -->
-            <div class="post">
+            <div class="post" hidden>
                 <div class="post__header">
                     <i class="material-icons sidebar__topAvatar"> account_circle </i>
                     <div class="post__info">

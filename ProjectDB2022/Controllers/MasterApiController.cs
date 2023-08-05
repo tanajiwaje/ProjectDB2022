@@ -88,7 +88,7 @@ namespace ProjectDB2022.Controllers
 
             string fname = form["first_name"];
 
-            sp_fetch_tbluser_posts_Result obj = new sp_fetch_tbluser_posts_Result
+            sp_fetch_tbluser_newposts_Result obj = new sp_fetch_tbluser_newposts_Result
             {
                 user_id = int.Parse(form["user_id"]),
                 post_date = DateTime.Parse(form["post_date"]),
@@ -123,7 +123,7 @@ namespace ProjectDB2022.Controllers
 
         [HttpGet]
         [Route("api/master/getposts")]
-        public List<sp_fetch_tbluser_posts_Result> GetPosts()
+        public List<sp_fetch_tbluser_newposts_Result> GetPosts()
         {
             return _userpost.GetPosts();
         }
