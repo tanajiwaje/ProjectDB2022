@@ -45,11 +45,13 @@ namespace ProjectDB2022.Controllers
 
         IUserProfessionalExperinceService _userProfessionalService;
         IUserposts _userpost;
-        public MasterApiController(IUserposts userpost,ITopicService opicService, ITopicContentService opicContentService, IPostcategorieService postcategorieService, IStateService stateService, ICityService cityService, ILocationService locationService, IQualificationService qualificationService, ISpecilizationService specilizationService, IRoleService roleService, IGenderService genderService, IDesignationService designationService, IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
+        IPostLikesDislikes _postlike;
+        public MasterApiController(IPostLikesDislikes postLikesDislikes,IUserposts userpost,ITopicService opicService, ITopicContentService opicContentService, IPostcategorieService postcategorieService, IStateService stateService, ICityService cityService, ILocationService locationService, IQualificationService qualificationService, ISpecilizationService specilizationService, IRoleService roleService, IGenderService genderService, IDesignationService designationService, IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
         {   
 
             ebl = new ExtraBL();
             enc = new EncryptedUserId();
+            _postlike = postLikesDislikes;
             _userpost = userpost;
             _opicService = opicService;
             _opicContentService = opicContentService;
@@ -75,7 +77,23 @@ namespace ProjectDB2022.Controllers
         /// </summary>
         /// <returns></returns>
         /// 
+        [HttpPost]
+        [Route("api/master/post_likedislike")]
+        public string PostLikeDislike(sp_fetch_tblpost_like_dislikes_Result obj)
+        {
+            
+            _postlike.AddPostLikesDislikes(obj);
+            return "Like Successfully";
+        }
 
+        [HttpGet]
+        [Route("api/master/getpostlikedis")]
+        public List<sp_fetch_tblpost_like_dislikes_Result> GetPostLikeDislike()
+        {
+
+           // _postlike.AddPostLikesDislikes(obj);
+            return _postlike.GetPostLikesDislikes() ;
+        }
 
         ///user posts 
 
@@ -88,7 +106,7 @@ namespace ProjectDB2022.Controllers
 
             string fname = form["first_name"];
 
-            sp_fetch_tbluser_newposts_Result obj = new sp_fetch_tbluser_newposts_Result
+            sp_fetch_tbluser_post_Result obj = new sp_fetch_tbluser_post_Result
             {
                 user_id = int.Parse(form["user_id"]),
                 post_date = DateTime.Parse(form["post_date"]),
@@ -123,7 +141,7 @@ namespace ProjectDB2022.Controllers
 
         [HttpGet]
         [Route("api/master/getposts")]
-        public List<sp_fetch_tbluser_newposts_Result> GetPosts()
+        public List<sp_fetch_tbluser_post_Result> GetPosts()
         {
             return _userpost.GetPosts();
         }

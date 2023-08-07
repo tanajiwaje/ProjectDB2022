@@ -32,6 +32,7 @@ namespace ProjectDB2022
             container.RegisterType<IUserProfessionalExperinceService,UserProfessionalExperinceService>();
             container.RegisterType<IStateService, StateService>();
             container.RegisterType<IUserposts, UserPost>();
+            container.RegisterType<IPostLikesDislikes, PostLikesDislikes>();
 
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityDependencyResolver(container);

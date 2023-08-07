@@ -40,14 +40,14 @@ namespace DatabaseOperationServices.Implementation
 
         public List<sp_fetch_tblpost_like_dislikes_Result> GetPostLikesDislikes()
         {
-            string sp_name = "[sp_fetch_tblpost_comment_replys] {0}";
+            string sp_name = "[sp_fetch_tblpost_like_dislikes] {0}";
             object[] parameters = { 0 };
             return tblpost.ExecuteQuery(sp_name, parameters).ToList();
         }
 
         public sp_fetch_tblpost_like_dislikes_Result GetPostLikesDislikes(int likes_id)
         {
-            string sp_name = "[sp_fetch_tblpost_comment_replys] {0}";
+            string sp_name = "[sp_fetch_tblpost_like_dislikes] {0}";
             object[] parameters = { 0 };
             return tblpost.ExecuteQuery(sp_name, parameters).ToList().First();
         }

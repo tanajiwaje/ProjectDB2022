@@ -6,8 +6,8 @@
 
     <!-- Google Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Final - LinkedIn UI Clone</title>
+    @*<link rel="stylesheet" href="styles.css" />*@
+    <title>Dialogue UI</title>
     <script src="~/Scripts/jquery-3.7.0.min.js"></script>
     <script src="~/Scripts/bootstrap.min.js"></script>
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
@@ -20,6 +20,8 @@
 
             GetDetails();
             GetAllPost();
+            GetAllLikeDislike();
+
 
             $("#btnpost").click(function () {
                 FeedPost();
@@ -53,6 +55,97 @@
             })
         })
 
+        function GetAllLikeDislike() {
+            $.ajax({
+                url: "https://localhost:44319/api/master/getpostlikedis", // Update the API endpoint URL
+                method: "get",
+                contentType: 'application/json',
+                success: function (resp) {
+                    console.log(resp);
+                }
+                })
+                
+        }
+
+        function handleIconClick(button, iconName, post_id) {
+            //alert(post_id);
+            const icon = $(button).find("i");
+            const currentColor = icon.css("color");
+            const newSize = currentColor === "rgb(128, 128, 128)" ? "30px" : "24px";
+            const newColor = currentColor === "rgb(128, 128, 128)" ? "blue" : "gray";
+
+            icon.css({
+                "color": newColor,
+                "font-size": newSize
+            });
+          
+
+
+            // Additional logic based on iconName (optional)
+            switch (iconName) {
+                case 'thumb_up':
+                    // Do something specific for thumb_up
+                    likepostbtn(post_id);
+                    break;
+                case 'comment':
+                    // Do something specific for comment
+                    $(".textInput").toggle();
+                    $(".textInputicon").toggle();
+                    break;
+                case 'share':
+                    // Do something specific for share
+                    break;
+                case 'send':
+                    // Do something specific for send
+                    break;
+                default:
+                    // Handle other cases
+                
+                    break;
+            }
+        }
+
+        function btncomment(pots_id,photo) {
+            var user_id = $("#user_id").val();
+            var currentDate = new Date();
+            var formattedDate = currentDate.toDateString();
+            var commentmsg = $(".textInput").val();
+            var comment_photo = photo;
+
+            console.log(user_id)
+            console.log(formattedDate)
+            console.log(commentmsg)
+            console.log(comment_photo)
+            console.log(pots_id)
+
+            $(".textInput").val("");
+            comment_photo = "";
+
+          
+        }
+
+        function likepostbtn(post_id) {
+            var user_id = $("#user_id").val();
+            var currentDate = new Date();
+            var formattedDate = currentDate.toDateString();
+            var is_like = 0;
+            var _json = { "post_id": post_id, "like_dislike_date": formattedDate, "like_dislike_by_user": user_id, "is_like": is_like };
+            $.ajax({
+                url: "https://localhost:44319/api/master/post_likedislike", // Update the API endpoint URL
+                method: "post",
+                data: JSON.stringify(_json),
+                contentType: "application/json",
+                success: function (resp) {
+                    alert(resp);
+                    console.log(resp);
+                    // GetDetails();
+
+                }
+                   })
+        }
+
+       
+
         function GetAllPost() {
             
             $.ajax({
@@ -63,63 +156,96 @@
                   
                     console.log(resp);
                     var userid = $("#user_id").val();
-                    alert(userid);
+                   
                     $.each(resp, function (i, d) {
-
-                        
-
-                        if (userid == d.user_id) {
-
-                        }
-                        else {
-
                             var fullName = d.first_name + ' ' + d.last_name;
                             var folderimage = d.first_name + d.user_id;
-                            var postHtml = `
-        <div class="post__header">
-            <i class="material-icons sidebar__topAvatar"> account_circle </i>
+                        var postHtml = `
+          <div class="post1">
+        <div class="post__header" style="margin-top:10px;">
+            <i hidden class="material-icons sidebar__topAvatar"> account_circle </i>
+                <img src="/Images/${d.user_photo}" class="img-account-profile1 img-account-profile1 rounded-5 material-icons sidebar__topAvatar" id="profile" alt="logo" width="10" height="40" style="width:50px;height:50px;">
             <div class="post__info">
                 <h2>${fullName}</h2>
                 <p>Job Description</p>
+                <input type="text" id="post_id" value=${d.post_id} hidden>
             </div>
         </div>
     
         <div class="post__body">
-            <p>Message here</p>
-            <img height="100" width="100" src="/UserPosts/${folderimage}/${d.photo}"
+            <p>${d.post_description}</p>
+            <img height="120" width="150" style="margin-left:170px"; sty src="/UserPosts/${folderimage}/${d.photo}"
                  class="" alt="">
         </div>
     
-        <div class="feed__inputOptions">
-            <div class="inputOption">
-                <i style="color: gray" class="material-icons"> thumb_up </i>
-                <h4>Like</h4>
+
+        <div class="feed__inputOptions" hidden>
+            <div class="inputOption" onclick="likepostbtn(this)" >
+                <i id="likeButton" style="color: gray" class="material-icons"> thumb_up </i>
+              <!-- <h4>Like</h4>-->
             </div>
-            <div class="inputOption">
+            <div class="inputOption" onclick="commentpostbtn(this)">
                 <i style="color: gray" class="material-icons"> comment </i>
-                <h4>Comment</h4>
+                <!-- <h4>Comment</h4>-->
             </div>
-            <div class="inputOption">
+            <div class="inputOption" onclick="sharepostbtn(this)">
                 <i style="color: gray" class="material-icons"> share </i>
-                <h4>Share</h4>
+                <!-- <h4>Share</h4>-->
             </div>
-            <div class="inputOption">
+            <div class="inputOption" onclick="sendpostbtn(this)">
                 <i style="color: gray" class="material-icons"> send </i>
-                <h4>Send</h4>
+                <!-- <h4>Send</h4>-->
             </div>
         </div>
-        <div class="postseperation">
-         <hr/>
-        </div>
+
+        <div class="feed__inputOptions">
+    <div class="inputOption" onclick="handleIconClick(this, 'thumb_up',${d.post_id})">
+        <i id="likeButton" style="color: gray" class="material-icons">thumb_up</i>
+    </div>
+    <div class="inputOption" id="toggleButton" onclick="handleIconClick(this, 'comment')">
+        <i style="color: gray" class="material-icons">comment</i>
+    </div>
+    <div class="inputOption" onclick="handleIconClick(this, 'share')">
+        <i style="color: gray" class="material-icons">share</i>
+    </div>
+    <div class="inputOption" onclick="handleIconClick(this, 'send')">
+        <i style="color: gray" class="material-icons">send</i>
+    </div>
+</div>
+<div >
+  
+ <table style="width:110%;">
+   <tr >
+   <td>
+    <input type="text" class="form-control textInput" id="textInput" style="display:none;"  >
+ </td>
+ <td>
+ <button onclick="btncomment('${d.post_id}','${d.user_photo}')" class="btn btn-default"> 
+     <i id="textInputicon" style="color: gray;margin-top: 10px;margin-left: 5px;display:none;" class="material-icons textInputicon">send</i>
+     </button>
+     
+    </td>
+   </tr>
+
+ </table>
+     
+      
+    
+
+    
+        
+    
+
+  
+   
+
+ 
+ </div>
+</div>
     `;
-
-
                             $("#userposts").append(postHtml);
-                        }
+                        
                     })
-
-                   
-
                 },
                 error: function (xhr, status, error) {
                     alert("Error occurred: " + error);
@@ -282,8 +408,6 @@
                         $("#inputLocal").val(resp.local_address);
 
                         $("#inputUsername").val(resp.user_name);
-
-
                         $("#email").append(resp.email_address);
                         var profilePictureName = resp.user_photo;
                         $("#userpic").val(profilePictureName);
@@ -293,11 +417,8 @@
                         $(".img-account-profile").attr("src", path);
 
                         $(".abc").attr("src", path);
-
-
                         $("#oldpass").val(resp.password);
                     },
-
                 })
         }
     </script>
@@ -604,11 +725,20 @@
 
         /* Post */
         .post {
+            background-color: #f3f2ef;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+           
+        }
+
+        .post1 {
             background-color: white;
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 10px;
             box-shadow: 4px 4px 8px 2px rgba(0, 0, 0, 0.1);
+           
         }
 
         .post__header {
@@ -686,6 +816,18 @@
                 font-size: 12px;
                 color: gray;
             }
+            /*like button*/
+        .material-icons {
+            font-size: 24px;
+            vertical-align: middle;
+            width:35px;
+            height:35px;
+            transition: color 0.3s,width 2s,height 4s;
+            
+        }
+        .post{
+            margin-top:20px;
+        }
     </style>
 </head>
 <body>
