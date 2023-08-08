@@ -25,6 +25,7 @@ namespace ProjectDB2022.Controllers
     {
         ExtraBL ebl;
         EncryptedUserId enc;
+        projectDBEntities db;
         ITopicService _opicService;
         ITopicContentService _opicContentService;
         IPostcategorieService _postcategorieService;
@@ -46,9 +47,10 @@ namespace ProjectDB2022.Controllers
         IUserProfessionalExperinceService _userProfessionalService;
         IUserposts _userpost;
         IPostLikesDislikes _postlike;
-        public MasterApiController(IPostLikesDislikes postLikesDislikes,IUserposts userpost,ITopicService opicService, ITopicContentService opicContentService, IPostcategorieService postcategorieService, IStateService stateService, ICityService cityService, ILocationService locationService, IQualificationService qualificationService, ISpecilizationService specilizationService, IRoleService roleService, IGenderService genderService, IDesignationService designationService, IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
+        IPostcomments _postcomment;
+        public MasterApiController(IPostcomments postcomment, IPostLikesDislikes postLikesDislikes,IUserposts userpost,ITopicService opicService, ITopicContentService opicContentService, IPostcategorieService postcategorieService, IStateService stateService, ICityService cityService, ILocationService locationService, IQualificationService qualificationService, ISpecilizationService specilizationService, IRoleService roleService, IGenderService genderService, IDesignationService designationService, IUserDetailService userDetailService, IUserQualificationService userQualificationService, IUserExpertise ex, IUserProfessionalExperinceService userProfessionalService)
         {   
-
+            db=new projectDBEntities();
             ebl = new ExtraBL();
             enc = new EncryptedUserId();
             _postlike = postLikesDislikes;
@@ -68,15 +70,31 @@ namespace ProjectDB2022.Controllers
             //_userQualificationService = userQualificationService;
             //_ex = ex;
             _userProfessionalService = userProfessionalService;
+            _postcomment = postcomment;
         }
 
 
-        /// <summary>
-        /// 
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        /// 
+        
+       // add post comment
+         [HttpPost]
+        [Route("api/master/post_comment")]
+        public string Post_comment(sp_fetch_tblpost_comments_Result obj)
+        {
+            _postcomment.AddPostcomments(obj);
+            return "Comment Successfully";
+        }
+
+
+        // get all post comment
+        [HttpGet]
+        [Route("api/master/showAllComments")]
+        public List<sp_fetch_tblpost_comments_Result> Post_comment()
+        {
+            return _postcomment.GetPostcomments(); 
+        }
+
+
+        // post like dislike add
         [HttpPost]
         [Route("api/master/post_likedislike")]
         public string PostLikeDislike(sp_fetch_tblpost_like_dislikes_Result obj)
@@ -140,8 +158,16 @@ namespace ProjectDB2022.Controllers
 
 
         [HttpGet]
+        [Route("api/master/getlikecount/{post_id}")]
+        public int CountAllLike(int post_id)
+        {
+            var data = db.sp_like_count(post_id);
+            return data.Count();
+        }
+
+        [HttpGet]
         [Route("api/master/getposts")]
-        public List<sp_fetch_tbluser_post_Result> GetPosts()
+        public List<sp_fetch_AllFeedPostLikeComment_Result> GetPosts()
         {
             return _userpost.GetPosts();
         }

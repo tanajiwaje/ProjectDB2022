@@ -14,7 +14,7 @@ namespace DatabaseOperationServices.Interface
         void UpdatePosts(sp_fetch_tbluser_post_Result posts);
         void DeletePosts(int post_id);
         void RestorePosts(int post_id);
-        List<sp_fetch_tbluser_post_Result> GetPosts();
+        List<sp_fetch_AllFeedPostLikeComment_Result> GetPosts();
         sp_fetch_tbluser_post_Result GetPosts(int topic_id);
     }
 }

@@ -22,6 +22,7 @@
             GetAllPost();
             GetAllLikeDislike();
 
+           
 
             $("#btnpost").click(function () {
                 FeedPost();
@@ -105,23 +106,25 @@
             }
         }
 
-        function btncomment(pots_id,photo) {
+        function btncomment(post_id) {
             var user_id = $("#user_id").val();
             var currentDate = new Date();
             var formattedDate = currentDate.toDateString();
-            var commentmsg = $(".textInput").val();
-            var comment_photo = photo;
+            var commentmsg = $("#textInput_" + post_id).val();
+            var comment_photo = $("#user-pic").val();
+            var _json = { "post_id": post_id, "comment_date": formattedDate, "comment_by_user": user_id, "comment_message": commentmsg, "comment_photo": comment_photo };
 
-            console.log(user_id)
-            console.log(formattedDate)
-            console.log(commentmsg)
-            console.log(comment_photo)
-            console.log(pots_id)
+            $.ajax({
+                url: "https://localhost:44319/api/master/post_comment", // Update the API endpoint URL
+                method: "post",
+                data: JSON.stringify(_json),
+                contentType: "application/json",
+                success: function (resp) {
+                    alert(resp);
+                }
+            }) 
+           $("#textInput_" + post_id).val("");
 
-            $(".textInput").val("");
-            comment_photo = "";
-
-          
         }
 
         function likepostbtn(post_id) {
@@ -144,10 +147,27 @@
                    })
         }
 
-       
+
+        function LikeAllcount(post_id) {
+            //var _json = { "post_id": post_id };
+            //alert(post_id);
+            //console.log(_json);
+            $.ajax({
+                url: "https://localhost:44319/api/master/getlikecount/" + post_id, // Update the API endpoint URL
+                method: "get",
+                contentType: 'application/json',
+                //data: JSON.stringify(_json),
+                success: function (resp) {
+                    return resp;
+                   // $("#cntlike").html(resp);
+
+                }
+            })
+                   
+        }
 
         function GetAllPost() {
-            
+            alert("getallpost")
             $.ajax({
                 url: "https://localhost:44319/api/master/getposts", // Update the API endpoint URL
                 method: "get",
@@ -159,7 +179,9 @@
                    
                     $.each(resp, function (i, d) {
                             var fullName = d.first_name + ' ' + d.last_name;
-                            var folderimage = d.first_name + d.user_id;
+                        var folderimage = d.first_name + d.user_id;
+                        var likecount = LikeAllcount(d.post_id);
+                       
                         var postHtml = `
           <div class="post1">
         <div class="post__header" style="margin-top:10px;">
@@ -174,7 +196,7 @@
     
         <div class="post__body">
             <p>${d.post_description}</p>
-            <img height="120" width="150" style="margin-left:170px"; sty src="/UserPosts/${folderimage}/${d.photo}"
+            <img height="120" width="150" style="margin-left:170px"; sty src="/UserPosts/${folderimage}/${d.post_photo}"
                  class="" alt="">
         </div>
     
@@ -200,7 +222,8 @@
 
         <div class="feed__inputOptions">
     <div class="inputOption" onclick="handleIconClick(this, 'thumb_up',${d.post_id})">
-        <i id="likeButton" style="color: gray" class="material-icons">thumb_up</i>
+        <i id="likeButton" style="color: gray" class="material-icons"> thumb_up</i>
+        <span id="cntlike">${likecount}<span>
     </div>
     <div class="inputOption" id="toggleButton" onclick="handleIconClick(this, 'comment')">
         <i style="color: gray" class="material-icons">comment</i>
@@ -217,10 +240,10 @@
  <table style="width:110%;">
    <tr >
    <td>
-    <input type="text" class="form-control textInput" id="textInput" style="display:none;"  >
+    <input type="text" class="form-control textInput" id="textInput_${d.post_id}" style="display:none;"  >
  </td>
  <td>
- <button onclick="btncomment('${d.post_id}','${d.user_photo}')" class="btn btn-default"> 
+ <button onclick="btncomment(${d.post_id})" class="btn btn-default"> 
      <i id="textInputicon" style="color: gray;margin-top: 10px;margin-left: 5px;display:none;" class="material-icons textInputicon">send</i>
      </button>
      
@@ -228,22 +251,10 @@
    </tr>
 
  </table>
-     
-      
-    
-
-    
-        
-    
-
-  
-   
-
- 
  </div>
 </div>
     `;
-                            $("#userposts").append(postHtml);
+           $("#userposts").append(postHtml);
                         
                     })
                 },
@@ -412,6 +423,7 @@
                         var profilePictureName = resp.user_photo;
                         $("#userpic").val(profilePictureName);
                         var path = "/Images/" + profilePictureName;
+                        $("#user-pic").val(profilePictureName);
                         // var profilePictureName = resp.user_photo; // Assuming the response contains the photo name
                         // var profilePictureUrl = "~/Uploads/" + profilePictureName;
                         $(".img-account-profile").attr("src", path);
@@ -884,6 +896,7 @@
                 <img src="" class="img-account-profile img-account-profile rounded-5 material-icons sidebar__topAvatar" id="profile" alt="logo" width="10" height="40" style="width:70px;height:70px;">
                 &nbsp;
                 <h2> <span class="first_name"></span>  </h2>
+                <input type="text" value="" id="user-pic" hidden />
                 <h4 id="email"></h4>
             </div>
 

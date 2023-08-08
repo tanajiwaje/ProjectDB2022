@@ -13,15 +13,17 @@ namespace DatabaseOperationServices.Implementation
     {
 
         private IRepository<sp_fetch_tbluser_post_Result> userpost;
-        public UserPost(IRepository<sp_fetch_tbluser_post_Result> userpost)
+        private IRepository<sp_fetch_AllFeedPostLikeComment_Result> allpost;
+        public UserPost(IRepository<sp_fetch_tbluser_post_Result> userpost, IRepository<sp_fetch_AllFeedPostLikeComment_Result> allpost)
         {
             this.userpost = userpost;
+            this.allpost = allpost; 
         }
         public void AddPosts(sp_fetch_tbluser_post_Result posts)
         {
             string sp_name = "[sp_tbluser_posts] {0},{1},{2},{3},{4},{5},{6},{7}";
             object[] parameters = { "Insert", posts.post_id,posts.user_id,posts.post_date,posts.post_title,posts.post_description,posts.photo,posts.is_active };
-            userpost.ExecuteCommand(sp_name, parameters);
+            allpost.ExecuteCommand(sp_name, parameters);
 
 
         }
@@ -43,11 +45,11 @@ namespace DatabaseOperationServices.Implementation
          
         }
 
-        public List<sp_fetch_tbluser_post_Result> GetPosts()
+        public List<sp_fetch_AllFeedPostLikeComment_Result> GetPosts()
         {
-            string sp_name = "[sp_fetch_tbluser_post]{0}";
-            object[] parameters = { 0 };
-            return userpost.ExecuteQuery(sp_name, parameters).ToList();
+            string sp_name = "[sp_fetch_AllFeedPostLikeComment]";
+            object[] parameters = {  };
+            return allpost.ExecuteQuery(sp_name, parameters).ToList();
         }
 
         public sp_fetch_tbluser_post_Result GetPosts(int topic_id)
