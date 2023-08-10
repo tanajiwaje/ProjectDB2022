@@ -13,8 +13,8 @@ namespace DatabaseOperationServices.Implementation
     {
 
         private IRepository<sp_fetch_tbluser_post_Result> userpost;
-        private IRepository<sp_fetch_AllFeedPostLikeComment_Result> allpost;
-        public UserPost(IRepository<sp_fetch_tbluser_post_Result> userpost, IRepository<sp_fetch_AllFeedPostLikeComment_Result> allpost)
+        private IRepository<sp_fetch_AllPostLikeCommentFeed_Result> allpost;
+        public UserPost(IRepository<sp_fetch_tbluser_post_Result> userpost, IRepository<sp_fetch_AllPostLikeCommentFeed_Result> allpost)
         {
             this.userpost = userpost;
             this.allpost = allpost; 
@@ -45,9 +45,9 @@ namespace DatabaseOperationServices.Implementation
          
         }
 
-        public List<sp_fetch_AllFeedPostLikeComment_Result> GetPosts()
+        public List<sp_fetch_AllPostLikeCommentFeed_Result> GetPosts()
         {
-            string sp_name = "[sp_fetch_AllFeedPostLikeComment]";
+            string sp_name = "[sp_fetch_AllPostLikeCommentFeed]";
             object[] parameters = {  };
             return allpost.ExecuteQuery(sp_name, parameters).ToList();
         }

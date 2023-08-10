@@ -180,7 +180,7 @@
                     $.each(resp, function (i, d) {
                             var fullName = d.first_name + ' ' + d.last_name;
                         var folderimage = d.first_name + d.user_id;
-                        var likecount = LikeAllcount(d.post_id);
+                     
                        
                         var postHtml = `
           <div class="post1">
@@ -223,7 +223,7 @@
         <div class="feed__inputOptions">
     <div class="inputOption" onclick="handleIconClick(this, 'thumb_up',${d.post_id})">
         <i id="likeButton" style="color: gray" class="material-icons"> thumb_up</i>
-        <span id="cntlike">${likecount}<span>
+        <span id="cntlike">${d.total_likes}<span>
     </div>
     <div class="inputOption" id="toggleButton" onclick="handleIconClick(this, 'comment')">
         <i style="color: gray" class="material-icons">comment</i>

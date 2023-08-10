@@ -7,6 +7,7 @@ using ProjectDatabaseOperation;
 using DatabaseOperationServices.Implementaion;
 using DatabaseOperationServices.Interface;
 using System.Web;
+using System.Runtime.CompilerServices;
 
 namespace DatabaseOperationServices.Implementaion
 {
@@ -14,10 +15,14 @@ namespace DatabaseOperationServices.Implementaion
     {
         private IRepository<sp_fetch_tbluser_details_Result> usedrepo;
         private IRepository<sp_check_email_Result> emailrepo;
-        public UserDetailService(IRepository<sp_fetch_tbluser_details_Result> usedrepo,IRepository<sp_check_email_Result> emailrepo)
+        private IRepository<sp_fetch_userverification_Result> varify;
+
+        
+        public UserDetailService(IRepository<sp_fetch_userverification_Result> varify,IRepository<sp_fetch_tbluser_details_Result> usedrepo,IRepository<sp_check_email_Result> emailrepo)
      {
          this.usedrepo = usedrepo;
             this.emailrepo = emailrepo;
+            this.varify = varify;
 
      }
       public void AddUserDetailService(sp_fetch_tbluser_details_Result userdetail)
@@ -99,6 +104,13 @@ namespace DatabaseOperationServices.Implementaion
             string sp_name = "[sp_check_email] {0}";
             object[] parameters = { email};
              return emailrepo.ExecuteQuery(sp_name, parameters).ToList().First();
+        }
+
+        public List<sp_fetch_userverification_Result> GetUserverification()
+        {
+            string sp_name = "[sp_fetch_userverification]";
+            object[] parameters = { };
+            return varify.ExecuteQuery(sp_name, parameters);
         }
     }
 }

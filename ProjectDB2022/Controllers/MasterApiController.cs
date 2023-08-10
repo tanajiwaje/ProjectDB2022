@@ -82,11 +82,20 @@ namespace ProjectDB2022.Controllers
         {
             _postcomment.AddPostcomments(obj);
             return "Comment Successfully";
+           
+        }
+
+        [HttpGet]
+        [Route("api/master/verifyuser")]
+        public List<sp_fetch_userverification_Result> VarifyUser()
+        {
+            return _userDetailService.GetUserverification();
         }
 
 
-        // get all post comment
-        [HttpGet]
+
+            // get all post comment
+            [HttpGet]
         [Route("api/master/showAllComments")]
         public List<sp_fetch_tblpost_comments_Result> Post_comment()
         {
@@ -167,7 +176,7 @@ namespace ProjectDB2022.Controllers
 
         [HttpGet]
         [Route("api/master/getposts")]
-        public List<sp_fetch_AllFeedPostLikeComment_Result> GetPosts()
+        public List<sp_fetch_AllPostLikeCommentFeed_Result> GetPosts()
         {
             return _userpost.GetPosts();
         }

@@ -21,6 +21,7 @@ namespace DatabaseOperationServices.Interface
         sp_fetch_tbluser_details_Result LoginCreadential(string UserName, string Pass);
 
         sp_check_email_Result Getemail(string email);
+        List<sp_fetch_userverification_Result> GetUserverification();
 
 
     }
